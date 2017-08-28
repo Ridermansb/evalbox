@@ -45,7 +45,7 @@ export default class extends React.PureComponent {
 
         return (
             <div className={className}>
-                <div className="ui top attached menu">
+                <div className="ui top attached  menu">
                     <div className="header item">
                         Editor
                     </div>

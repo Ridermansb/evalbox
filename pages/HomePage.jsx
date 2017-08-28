@@ -94,11 +94,8 @@ export default class extends React.PureComponent {
 
         return (
             <div>
-                <div className="ui attached stackable menu">
-                    <Menu />
-                </div>
-
-                <div className="ui equal width internally celled container grid">
+                <Menu />
+                <div className="ui equal width internally celled grid">
                     <div className="row">
                         <Editor
                             className="column"

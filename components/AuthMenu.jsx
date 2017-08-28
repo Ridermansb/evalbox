@@ -1,4 +1,5 @@
 import React from 'react'
+import { autobind } from 'core-decorators';
 import WeDeploy from 'wedeploy';
 
 export default class extends React.PureComponent {
@@ -6,25 +7,61 @@ export default class extends React.PureComponent {
         auth:  WeDeploy.auth(process.env.WEDEPLOY_AUTH_URL)
     };
 
+    componentDidMount() {
+        $(this.dropdown)
+            .dropdown()
+        ;
+    }
+
+    @autobind
+    githubAuthClick(e) {
+        e.preventDefault();
+        const { auth } = this.state;
+
+        const provider = new auth.provider.Github();
+        provider.setProviderScope("user:email");
+        auth.signInWithRedirect(provider);
+        auth.onSignIn(function(user) {
+            // Fires when user is signed in after redirect.
+        });
+    }
+    @autobind
+    googleAuthClick(e) {
+        e.preventDefault();
+        const { auth } = this.state;
+
+        var provider = new auth.provider.Google();
+        provider.setProviderScope("email");
+        auth.signInWithRedirect(provider);
+        auth.onSignIn(function(user) {
+            // Fires when user is signed in after redirect.
+        });
+    }
+
     render() {
         const {auth} = this.state;
         const currentUser = auth.currentUser;
 
-        if (currentUser) {
-            return <div className="ui dropdown item">
-                Me
-                <i className="dropdown icon"/>
-                <div className="menu">
-                    <a className="item"><i className="edit icon"/> Edit Profile</a>
-                    <a className="item"><i className="globe icon"/> Choose Language</a>
-                    <a className="item"><i className="settings icon"/> Account Settings</a>
-                </div>
+        return <div className="right menu">
+            {currentUser && <div className="item">
+                {currentUser.name}
+            </div>}
+
+            {!currentUser &&
+            <div className="item">
+                <button className="ui github black button" onClick={this.githubAuthClick}>
+                    <i className="github icon"/> Github
+                </button>
             </div>
-        }
-
-        return <a href="/signin" className="item">Sign-in</a>
-
-
+            }
+            {!currentUser &&
+            <div className="fitted item">
+                <button className="ui google plus button" onClick={this.googleAuthClick}>
+                    <i className="google plus icon"/> Google
+                </button>
+            </div>
+            }
+        </div>
     }
 
 }

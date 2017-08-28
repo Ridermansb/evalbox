@@ -9,6 +9,7 @@
  * [ ] Add auth support
  * [ ] Put Add libraries into top menu
  * [ ] Better iFrameDoc 
+ * [ ] Auto execute with debounce (Add options to disable it)
 
 
 ## Get starter
