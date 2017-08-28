@@ -34,11 +34,10 @@ export default class extends React.PureComponent {
 
     render() {
         return <form className="ui form" onSubmit={this.handleSubmit}>
-            <div className="ui transparent icon input">
+            <div className="ui transparent input">
                 <input type="text" value={this.state.value}
                        placeholder="Add library ..."
                        onChange={this.handleChange} />
-                <i className="add circle icon" type="submit"/>
             </div>
         </form>
     }

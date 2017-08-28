@@ -1,8 +1,15 @@
 > Evaluate Javascript code safely with Iframe Sandbox
 
-Read more about [sandbox here][1]
-
 ![Demo](demo.png)
+
+*Read more about [sandbox here][1]*
+
+## Todos
+
+ * [ ] Add auth support
+ * [ ] Put Add libraries into top menu
+ * [ ] Better iFrameDoc 
+
 
 ## Get starter
 

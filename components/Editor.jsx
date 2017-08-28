@@ -45,17 +45,9 @@ export default class extends React.PureComponent {
 
         return (
             <div className={className}>
-                <div className="ui pointing menu">
+                <div className="ui top attached menu">
                     <div className="header item">
                         Editor
-                    </div>
-                    <div className="active item">
-                        Libraries
-                        {hasLibraries &&
-                            <div className="ui teal left pointing label">
-                                {libraries.length}
-                            </div>
-                        }
                     </div>
                     <div className="item">
                         <AddLibrary onAdded={this.onLibraryAdded} />
@@ -67,9 +59,15 @@ export default class extends React.PureComponent {
                     </div>
                 </div>
                 {hasLibraries &&
-                    <Libraries libraries={libraries} onChange={this.onLibrariesChanged} />
+                    <div className="ui attached segment">
+                        <Libraries
+                            libraries={libraries}
+                            onChange={this.onLibrariesChanged} />
+                    </div>
                 }
-                <Code onChange={this.onCodeChange} />
+                <Code
+                    className="ui bottom attached segment"
+                    onChange={this.onCodeChange} />
             </div>
         );
     }

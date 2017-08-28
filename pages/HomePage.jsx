@@ -1,10 +1,11 @@
 import React from 'react';
 import {autobind} from 'core-decorators';
-import Editor from './Editor'
-import Console from './Console'
+import Editor from 'components/Editor'
+import Console from 'components/Console'
+import Menu from 'components/Menu'
 
 export default class extends React.PureComponent {
-    static displayName = 'App';
+    static displayName = 'Home';
 
     state = {
         output: '',
@@ -92,21 +93,27 @@ export default class extends React.PureComponent {
         const {output, iframeDoc} = this.state;
 
         return (
-            <div className="ui equal width internally celled container grid">
-                <div className="row">
-                    <Editor
-                        className="column"
-                        executeHandler={this.execute}
-                        librariesChanged={this.handleIframeDoc}
-                    />
-                    <Console className="column" output={output}/>
+            <div>
+                <div className="ui attached stackable menu">
+                    <Menu />
                 </div>
-                <iframe
-                    className="ui basic mobile only row segment"
-                    sandbox='allow-scripts'
-                    ref={(el) => {this.sandboxed = el;}}
-                    src="about:blank"
-                    srcDoc={iframeDoc}/>
+
+                <div className="ui equal width internally celled container grid">
+                    <div className="row">
+                        <Editor
+                            className="column"
+                            executeHandler={this.execute}
+                            librariesChanged={this.handleIframeDoc}
+                        />
+                        <Console className="column" output={output}/>
+                    </div>
+                    <iframe
+                        className="ui basic mobile only row segment"
+                        sandbox='allow-scripts'
+                        ref={(el) => {this.sandboxed = el;}}
+                        src="about:blank"
+                        srcDoc={iframeDoc}/>
+                </div>
             </div>
         );
     }

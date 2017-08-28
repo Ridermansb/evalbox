@@ -20,7 +20,8 @@ export default class extends React.PureComponent {
         });
     }
     render() {
-        return <div className="ui segment form" style={styles.code}>
+        const { className } = this.props;
+        return <div className={`ui ${className} form`} style={styles.code}>
             <textarea
                 autoComplete='off'
                 ref={(el) => {this.editor = el;}}

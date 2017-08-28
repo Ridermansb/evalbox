@@ -7,6 +7,8 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { resolve } = require('path');
 
+require('dotenv').config();
+
 module.exports = {
     entry: {
         vendor: ['react', 'react-dom', 'semantic-ui-css'],
@@ -21,7 +23,14 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(['dist']),
-        new webpack.EnvironmentPlugin({NODE_ENV: 'development'}),
+        new webpack.EnvironmentPlugin({
+            NODE_ENV: 'development',
+            WEDEPLOY_AUTH_URL: 'https://auth-evalbox.wedeploy.io',
+            WEDEPLOY_AUTH_GOOGLE_CLIENT_ID: '',
+            WEDEPLOY_AUTH_GOOGLE_CLIENT_SECRET: '',
+            WEDEPLOY_AUTH_GITHUB_CLIENT_ID: '',
+            WEDEPLOY_AUTH_GITHUB_CLIENT_SECRET: ''
+        }),
         new webpack.DefinePlugin({
             "require.specified": "require.resolve"
         }),
@@ -84,7 +93,10 @@ module.exports = {
     ],
     resolve: {
         extensions: ['.js', '.jsx'],
-        alias: {assets: resolve(__dirname, 'assets')},
+        alias: {
+            assets: resolve(__dirname, 'assets'),
+            components: resolve(__dirname, 'components')
+        },
     },
     module: {
         rules: [

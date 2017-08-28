@@ -37,14 +37,14 @@ export default class extends React.PureComponent {
         const isError = errorRegex.test(output);
         const outputClassName = cx('ui', {
             'red': isError,
-        }, 'segment');
+        }, 'bottom attached segment');
 
         const clipboardCopyIsSupport = Clipboard.isSupported();
 
         return (
             <div className={className}>
-                <div className="ui pointing menu">
-                    <a className="active item">Console</a>
+                <div className="ui top attached menu">
+                    <a className="item">Console</a>
                     {clipboardCopyIsSupport &&
                         <div className="right menu">
                             <a className="item copyButton">

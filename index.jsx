@@ -1,17 +1,23 @@
 import React from 'react';
 import { render } from 'react-dom';
-import App from './components/App';
+import history from './history'
+import routes from './routes';
+import router from './router';
 import 'semantic-ui-css';
 
 import './assets/style.css';
 
 const rootEl = document.getElementById('root');
 
-render(<App />, rootEl);
-
-if (module.hot) {
-    module.hot.accept('./components/App', () => {
-        const NewRoot = require('./components/App').default;
-        render(<NewRoot />, rootEl);
-    });
+function renderComponent(component) {
+    render(component, rootEl);
 }
+
+function renderLocation(location) {
+    router.resolve(routes, location)
+        .then(renderComponent)
+        .catch(error => router.resolve(routes, { ...location, error })
+        .then(renderComponent));
+}
+renderLocation(history.location);
+history.listen(render);
