@@ -69,6 +69,11 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.(html)$/,
+                use: {loader: 'file-loader'},
+                exclude: [ resolve(__dirname, 'index.tpl.html'), ]
+            },
+            {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {loader: 'babel-loader'},

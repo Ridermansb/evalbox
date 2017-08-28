@@ -1,1 +1,14 @@
 @import "../node_modules/semantic-ui-css/semantic.css";
+
+html.ios {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+html.ios,
+html.ios body {
+    height: initial !important;
+}
+
+html, body, pre, code {
+    margin: 0;
+}
