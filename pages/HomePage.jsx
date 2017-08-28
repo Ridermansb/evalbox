@@ -95,7 +95,7 @@ export default class extends React.PureComponent {
         return (
             <div>
                 <Menu />
-                <div className="ui equal width internally celled grid">
+                <div className="ui equal width internally celled container grid">
                     <div className="row">
                         <Editor
                             className="column"
