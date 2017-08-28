@@ -1,0 +1,9 @@
+{
+  "name": "evalbox",
+  "alias": "evalbox",
+  "files": [
+    "dist"
+  ],
+  "type": "docker",
+  "public": true
+}
