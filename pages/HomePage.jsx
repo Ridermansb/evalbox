@@ -14,10 +14,19 @@ export default class extends React.PureComponent {
 <head>
     <title>Evalbox's Frame</title>
     <script>
+        var executionId;
         window.addEventListener('message', function (e) {
+            
             var mainWindow = e.source;
             var result = '';
+            
+            if (executionId){
+                clearInterval(executionId);
+                mainWindow.postMessage(result, e.origin);
+            }
+            
             try {
+                // From https://stackoverflow.com/a/44073447/491181
                 var cons = {
                     log: (...args) => result += args + '\\n',
                 };
@@ -25,7 +34,13 @@ export default class extends React.PureComponent {
             } catch (e) {
                 result = 'Error: ' + e.message + '\\n' + e.stack;
             }
-            mainWindow.postMessage(result, event.origin);
+            var cacheResult = '';
+            executionId = setInterval(() => {
+                if (cacheResult !== result) {
+                  mainWindow.postMessage(result, e.origin);
+                  cacheResult = result;
+                }
+            }, 2000);
         });
     </script>
 </head>
@@ -94,7 +109,7 @@ export default class extends React.PureComponent {
 
         return (
             <div>
-                <Menu />
+                <Menu/>
                 <div className="ui equal width internally celled container grid">
                     <div className="row">
                         <Editor
@@ -107,7 +122,9 @@ export default class extends React.PureComponent {
                     <iframe
                         className="ui basic mobile only row segment"
                         sandbox='allow-scripts'
-                        ref={(el) => {this.sandboxed = el;}}
+                        ref={(el) => {
+                            this.sandboxed = el;
+                        }}
                         src="about:blank"
                         srcDoc={iframeDoc}/>
                 </div>

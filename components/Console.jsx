@@ -44,7 +44,7 @@ export default class extends React.PureComponent {
         return (
             <div className={className}>
                 <div className="ui top attached menu">
-                    <a className="item">Console</a>
+                    <div className="header item">Console</div>
                     {clipboardCopyIsSupport &&
                         <div className="right menu">
                             <a className="item copyButton">
