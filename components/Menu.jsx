@@ -1,5 +1,6 @@
 import React from 'react'
 import logo from 'favicon.png';
+import AuthMenu from './AuthMenu';
 
 export default class extends React.PureComponent {
     render() {
@@ -8,7 +9,7 @@ export default class extends React.PureComponent {
                 <img src={logo} /> Evalbox
             </a>
             <div className="right menu">
-                <a href="/signin" className="item">Sign-in</a>
+                <AuthMenu className="item" />
             </div>
         </div>
     }
