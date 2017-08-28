@@ -59,10 +59,27 @@ module.exports = {
             threshold: 10240,
             minRatio: 0.8,
         }),
+
+        // used to split out our sepcified vendor script
+        // https://brotzky.co/blog/code-splitting-react-router-webpack-2/
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
-            filename: 'vendor.[hash].js',
-            chunks: ['vendor'],
+            minChunks: Infinity,
+            filename: '[name].[hash].js',
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'node-static',
+            filename: 'node-static.js',
+            minChunks(module) {
+                const context = module.context;
+                return context && context.indexOf('node_modules') >= 0;
+            },
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            async: 'used-twice',
+            minChunks(module, count) {
+                return count >= 2;
+            },
         }),
     ],
     resolve: {
