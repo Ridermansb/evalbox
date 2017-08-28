@@ -1,9 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import hljs from 'highlight.js';
 import Clipboard from 'clipboard';
-
-import 'highlight.js/styles/github-gist.css';
 
 const errorRegex = /^Error:\s.+/gm;
 
@@ -15,9 +12,6 @@ export default class extends React.PureComponent {
     static displayName = 'Console';
 
     componentDidMount() {
-        hljs.configure({useBR: true});
-        hljs.initHighlighting();
-
         const self = this;
         this.clipboard = new Clipboard('.copyButton', {
             target() {
@@ -60,11 +54,7 @@ export default class extends React.PureComponent {
                     }
                 </div>
                 <div className={outputClassName} style={styles.output}>
-                    <pre>
-                        <code
-                            className="js"
-                            dangerouslySetInnerHTML={{__html: hljs.highlight('js', output).value}} />
-                    </pre>
+                    {output}
                 </div>
             </div>
         );

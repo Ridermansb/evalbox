@@ -44,7 +44,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "clipboard": "^1.7.1",
-    "highlight.js": "^9.12.0",
+    "codemirror": "^5.29.0",
     "jquery": "^3.2.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

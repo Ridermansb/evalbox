@@ -6,7 +6,32 @@ import Console from './Console'
 export default class extends React.PureComponent {
     static displayName = 'App';
 
-    state = {output: '', iframeDoc: ''};
+    state = {
+        output: '',
+        iframeDoc: `<!DOCTYPE html>
+<html>
+<head>
+    <title>Evalbox's Frame</title>
+    <script>
+        window.addEventListener('message', function (e) {
+            var mainWindow = e.source;
+            var result = '';
+            try {
+                var cons = {
+                    log: (...args) => result += args + '\\n',
+                };
+                eval('((console) => { ' + e.data + ' })')(cons);
+            } catch (e) {
+                result = 'Error: ' + e.message + '\\n' + e.stack;
+            }
+            mainWindow.postMessage(result, event.origin);
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>`
+    };
 
     componentDidMount() {
         window.addEventListener('message', this.onMessage);
@@ -59,7 +84,7 @@ export default class extends React.PureComponent {
 </head>
 <body>
 </body>
-</html>`
+</html>`;
         this.setState((prevState) => ({...prevState, iframeDoc}));
     }
 
@@ -79,9 +104,7 @@ export default class extends React.PureComponent {
                 <iframe
                     className="ui basic mobile only row segment"
                     sandbox='allow-scripts'
-                    ref={(el) => {
-                        this.sandboxed = el;
-                    }}
+                    ref={(el) => {this.sandboxed = el;}}
                     src="about:blank"
                     srcDoc={iframeDoc}/>
             </div>

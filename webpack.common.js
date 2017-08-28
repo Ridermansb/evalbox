@@ -22,6 +22,9 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(['dist']),
         new webpack.EnvironmentPlugin({NODE_ENV: 'development'}),
+        new webpack.DefinePlugin({
+            "require.specified": "require.resolve"
+        }),
         new HtmlWebpackPlugin({
             title: 'Evalbox',
             template: resolve(__dirname, 'index.tpl.html'),
