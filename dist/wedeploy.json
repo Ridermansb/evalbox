@@ -1,4 +1,3 @@
-
 {
     "id": "ui",
     "image": "wedeploy/hosting:0.0.1",
@@ -6,6 +5,5 @@
         "WEDEPLOY_WEB_PATH": "dist",
         "WEDEPLOY_AUTH_GITHUB": "true",
         "WEDEPLOY_AUTH_GOOGLE": "true"
-    },
-    "customDomains": ["evalbox.ridermansb.me"]
+    }
 }

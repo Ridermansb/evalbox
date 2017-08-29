@@ -4,16 +4,58 @@ import Editor from 'components/Editor'
 import Console from 'components/Console'
 import Menu from 'components/Menu'
 
-export default class extends React.PureComponent {
-    static displayName = 'Home';
+const styles = {
+    iframe: {
+        display: 'none'
+    }
+};
 
-    state = {
-        output: '',
-        iframeDoc: `<!DOCTYPE html>
+const iFrameDocCompile = (scripts = []) => {
+    const tagScripts = scripts.reduce((acc, next) => {
+        acc += `<script async=false src="${next}" ></script>`;
+        return acc;
+    }, '');
+
+    return `<!DOCTYPE html>
 <html>
 <head>
     <title>Evalbox's Frame</title>
+    ${tagScripts}
     <script>
+
+        function formatString() {
+          
+          var formatRegExp = /%[sdj%]/g;
+                    
+          var i = 1;
+          var args = arguments;
+          var len = args.length;
+          var str = String(args[0]).replace(formatRegExp, function(x) {
+            if (x === '%%') return '%';
+            if (i >= len) return x;
+            switch (x) {
+              case '%s': return String(args[i++]);
+              case '%d': return Number(args[i++]);
+              case '%j':
+                try {
+                  return JSON.stringify(args[i++]);
+                } catch (_) {
+                  return '[Circular]';
+                }
+              default:
+                return x;
+            }
+          });
+          for (var x = args[i]; i < len; x = args[++i]) {
+            if (isNull(x) || !isObject(x)) {
+              str += ' ' + x;
+            } else {
+              str += ' ' + inspect(x);
+            }
+          }
+          return str;
+        }
+
         var executionId;
         window.addEventListener('message', function (e) {
             
@@ -28,12 +70,15 @@ export default class extends React.PureComponent {
             try {
                 // From https://stackoverflow.com/a/44073447/491181
                 var cons = {
-                    log: (...args) => result += args + '\\n',
+                    log: (...args) => {
+                        result += formatString.apply(this, args) + '\\n'
+                    },
                 };
                 eval('((console) => { ' + e.data + ' })')(cons);
             } catch (e) {
                 result = 'Error: ' + e.message + '\\n' + e.stack;
             }
+            mainWindow.postMessage(result, e.origin);
             var cacheResult = '';
             executionId = setInterval(() => {
                 if (cacheResult !== result) {
@@ -47,6 +92,14 @@ export default class extends React.PureComponent {
 <body>
 </body>
 </html>`
+};
+
+export default class extends React.PureComponent {
+    static displayName = 'Home';
+
+    state = {
+        output: '',
+        iFrameDoc: iFrameDocCompile()
     };
 
     componentDidMount() {
@@ -73,39 +126,12 @@ export default class extends React.PureComponent {
 
     @autobind
     handleIframeDoc(libraries) {
-        const scripts = libraries.map(library => {
-            return `<script async=false src="${library.url}" ></script>`
-        });
-
-        const iframeDoc = `<!DOCTYPE html>
-<html>
-<head>
-    <title>Evalbox's Frame</title>
-    ${scripts}
-    <script>
-        window.addEventListener('message', function (e) {
-            var mainWindow = e.source;
-            var result = '';
-            try {
-                var cons = {
-                    log: (...args) => result += args + '\\n',
-                };
-                eval('((console) => { ' + e.data + ' })')(cons);
-            } catch (e) {
-                result = 'Error: ' + e.message + '\\n' + e.stack;
-            }
-            mainWindow.postMessage(result, event.origin);
-        });
-    </script>
-</head>
-<body>
-</body>
-</html>`;
-        this.setState((prevState) => ({...prevState, iframeDoc}));
+        const iFrameDoc = iFrameDocCompile(libraries.map(l => l.url));
+        this.setState((prevState) => ({...prevState, iFrameDoc}));
     }
 
     render() {
-        const {output, iframeDoc} = this.state;
+        const {output, iFrameDoc} = this.state;
 
         return (
             <div>
@@ -119,15 +145,15 @@ export default class extends React.PureComponent {
                         />
                         <Console className="column" output={output}/>
                     </div>
-                    <iframe
-                        className="ui basic mobile only row segment"
-                        sandbox='allow-scripts'
-                        ref={(el) => {
-                            this.sandboxed = el;
-                        }}
-                        src="about:blank"
-                        srcDoc={iframeDoc}/>
                 </div>
+                <iframe
+                    style={styles.iframe}
+                    sandbox='allow-scripts'
+                    ref={(el) => {
+                        this.sandboxed = el;
+                    }}
+                    src="about:blank"
+                    srcDoc={iFrameDoc}/>
             </div>
         );
     }
