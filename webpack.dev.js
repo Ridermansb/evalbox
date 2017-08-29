@@ -13,7 +13,7 @@ module.exports = merge(common, {
             'babel-polyfill',
             'react-hot-loader/patch',
             `webpack-dev-server/client?http://${host}:${port}`,
-            './index.jsx',
+            './ui/index.jsx',
         ],
     },
     plugins: [
@@ -22,7 +22,7 @@ module.exports = merge(common, {
         new webpack.NamedModulesPlugin(),
     ],
     devServer: {
-        contentBase: join(__dirname, 'assets'),
+        contentBase: join(__dirname, 'ui', 'assets'),
         publicPath: '/',
         overlay: true,
         compress: true,

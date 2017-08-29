@@ -25,7 +25,7 @@ module.exports = {
         new CleanWebpackPlugin(['dist']),
         new webpack.EnvironmentPlugin({
             NODE_ENV: 'development',
-            WEDEPLOY_AUTH_URL: 'https://auth-evalbox.wedeploy.io',
+            WEDEPLOY_AUTH_URL: 'https://auth-evalbox.ridermansb.me',
             WEDEPLOY_AUTH_GOOGLE_CLIENT_ID: '',
             WEDEPLOY_AUTH_GOOGLE_CLIENT_SECRET: '',
             WEDEPLOY_AUTH_GITHUB_CLIENT_ID: '',
@@ -36,7 +36,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             title: 'Evalbox',
-            template: resolve(__dirname, 'index.tpl.html'),
+            template: resolve(__dirname, 'ui', 'index.tpl.html'),
             chunksSortMode: 'dependency',
             minify: { collapseWhitespace: true },
         }),
@@ -94,8 +94,8 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
         alias: {
-            assets: resolve(__dirname, 'assets'),
-            components: resolve(__dirname, 'components')
+            assets: resolve(__dirname, 'ui', 'assets'),
+            components: resolve(__dirname, 'ui', 'components')
         },
     },
     module: {
@@ -103,7 +103,7 @@ module.exports = {
             {
                 test: /\.(html)$/,
                 use: {loader: 'file-loader'},
-                exclude: [ resolve(__dirname, 'index.tpl.html'), ]
+                exclude: [ resolve(__dirname, 'ui', 'index.tpl.html'), ]
             },
             {
                 test: /\.(js|jsx)$/,

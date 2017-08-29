@@ -1,8 +1,8 @@
 import React from 'react';
 import {autobind} from 'core-decorators';
-import Editor from 'components/Editor'
-import Console from 'components/Console'
-import Menu from 'components/Menu'
+import Editor from 'ui/components/Editor'
+import Console from 'ui/components/Console'
+import Menu from 'ui/components/Menu'
 
 const styles = {
     iframe: {

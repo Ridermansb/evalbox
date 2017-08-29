@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from 'favicon.png';
+import logo from '../../favicon.png';
 import AuthMenu from './AuthMenu';
 
 export default class extends React.PureComponent {

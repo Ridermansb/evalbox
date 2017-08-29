@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const common = require('./webpack.common.js');
 
@@ -9,7 +8,7 @@ module.exports = merge(common, {
     entry: {
         app: [
             'babel-polyfill',
-            './index.jsx',
+            './ui/index.jsx',
         ],
     },
     plugins: [
@@ -38,8 +37,5 @@ module.exports = merge(common, {
             },
             output: {comments: false, screw_ie8: true},
         }),
-        new CopyWebpackPlugin([
-            { from: './wedeploy-ui.json/', to: 'wedeploy.json' },
-        ]),
     ]
 });
