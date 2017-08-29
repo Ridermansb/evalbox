@@ -42,36 +42,36 @@ export default class extends React.PureComponent {
     }
 
     @autobind
-    handleSubmit(e) {
-        e.preventDefault();
-        const {value} = this.state;
-        const {onAdded} = this.props;
+    handleKey(e) {
+        if (e.charCode === 13) {
+            const {value} = this.state;
+            const {onAdded} = this.props;
 
-        const splited = value.split('/');
-        let fileName = splited.pop();
-        if (!fileName || fileName.trim() === '') {
-            fileName = splited.pop();
-        }
+            const splited = value.split('/');
+            let fileName = splited.pop();
+            if (!fileName || fileName.trim() === '') {
+                fileName = splited.pop();
+            }
 
-        if (fileName) {
-            onAdded({url: value, fileName});
-            this.setState({value: ''});
+            if (fileName) {
+                onAdded({url: value, fileName});
+                this.setState({value: ''});
+            }
         }
     }
 
     render() {
-        return <form className="ui search form"
-                     onSubmit={this.handleSubmit}
-                     ref={(el) => {
-                         this.search = el;
-                     }}>
-            <div className="ui transparent input">
+        return <div className="ui search"
+                     ref={(el) => {this.search = el;}}>
+            <div className="ui label right pointing">Add Library</div>
+            <div className="ui small input">
                 <input type="text" value={this.state.value}
-                       placeholder="Add library ..."
+                       placeholder="lodash"
                        className="prompt"
+                       onKeyPress={this.handleKey}
                        onChange={this.handleChange}
                 />
             </div>
-        </form>
+        </div>
     }
 }

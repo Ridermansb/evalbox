@@ -5,7 +5,16 @@ import Clipboard from 'clipboard';
 const errorRegex = /^Error:\s.+/gm;
 
 const styles = {
-    output: {minHeight: '100%'}
+    output: {minHeight: '100%'},
+    root: {
+        'position': 'relative',
+    },
+    copy: {
+        'position': 'absolute',
+        'zIndex': 9999,
+        'right': 24,
+        'top': 24,
+    }
 };
 
 export default class extends React.PureComponent {
@@ -42,17 +51,12 @@ export default class extends React.PureComponent {
         const clipboardCopyIsSupport = Clipboard.isSupported();
 
         return (
-            <div className={className}>
-                <div className="ui top attached menu">
-                    <div className="header item">Console</div>
-                    {clipboardCopyIsSupport &&
-                        <div className="right menu">
-                            <a className="item copyButton">
-                                <i className="copy icon"/>
-                            </a>
-                        </div>
-                    }
-                </div>
+            <div className={className} style={styles.root}>
+                {clipboardCopyIsSupport &&
+                    <a className="ui icon button copyButton" style={styles.copy}>
+                        <i className="copy icon"/>
+                    </a>
+                }
                 <div className={outputClassName} style={styles.output}>
                     {output}
                 </div>

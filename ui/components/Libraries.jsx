@@ -14,7 +14,7 @@ export default class extends React.PureComponent {
     }
 
     render() {
-        const { libraries } = this.props;
+        const { libraries, className } = this.props;
         const libraryItem = (library) => <div
             data-tooltip={library.url}
             data-position="left center"
@@ -25,7 +25,7 @@ export default class extends React.PureComponent {
             </div>
         </div>;
 
-        return <div className="ui horizontal list">
+        return <div className={`ui horizontal ${className} list`}>
             {libraries.map(it => libraryItem(it))}
         </div>
     }

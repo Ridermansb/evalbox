@@ -1,12 +1,16 @@
 import React from 'react';
 import {autobind} from 'core-decorators';
-import Editor from 'ui/components/Editor'
-import Console from 'ui/components/Console'
-import Menu from 'ui/components/Menu'
+import Editor from 'ui/components/Editor';
+import Console from 'ui/components/Console';
+import Menu from 'ui/components/Menu';
 
 const styles = {
     iframe: {
         display: 'none'
+    },
+    fork: {
+        'position': 'absolute',
+        'top': 0, 'left': 0, 'border': 0,
     }
 };
 
@@ -138,14 +142,13 @@ export default class extends React.PureComponent {
 
         return (
             <div className="ui container">
-                <Menu/>
-                <div className="ui grid">
+                <Menu librariesChanged={this.handleIframeDoc}/>
+                <div className="ui stackable two column grid">
                     <Editor
-                        className="sixteen wide tablet eight wide computer column"
+                        className="column"
                         executeHandler={this.execute}
-                        librariesChanged={this.handleIframeDoc}
                     />
-                    <Console className="sixteen wide tablet eight wide computer column" output={output}/>
+                    <Console className="column" output={output}/>
                 </div>
                 <iframe
                     style={styles.iframe}
