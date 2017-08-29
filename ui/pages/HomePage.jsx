@@ -113,6 +113,7 @@ export default class extends React.PureComponent {
     @autobind
     onMessage(e) {
         const frame = this.sandboxed;
+        console.log('message .. ', e);
         if (e.origin === "null" && e.source === frame.contentWindow) {
             this.setState((prevState) => ({...prevState, output: e.data}));
         }

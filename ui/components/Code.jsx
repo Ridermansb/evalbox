@@ -24,6 +24,7 @@ export default class extends React.PureComponent {
         const code = localStorage.getItem('code');
         if (code) {
             codeMirror.getDoc().setValue(code);
+            onChange(code)
         }
     }
     render() {

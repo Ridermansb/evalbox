@@ -37,7 +37,7 @@ export default class extends React.PureComponent {
         const isError = errorRegex.test(output);
         const outputClassName = cx('ui', {
             'red': isError,
-        }, 'bottom attached segment');
+        }, 'bottom attached secondary segment');
 
         const clipboardCopyIsSupport = Clipboard.isSupported();
 
