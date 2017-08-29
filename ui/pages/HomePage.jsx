@@ -137,17 +137,15 @@ export default class extends React.PureComponent {
         const {output, iFrameDoc} = this.state;
 
         return (
-            <div>
+            <div className="ui container">
                 <Menu/>
-                <div className="ui equal width internally celled container grid">
-                    <div className="row">
-                        <Editor
-                            className="column"
-                            executeHandler={this.execute}
-                            librariesChanged={this.handleIframeDoc}
-                        />
-                        <Console className="column" output={output}/>
-                    </div>
+                <div className="ui grid">
+                    <Editor
+                        className="sixteen wide tablet eight wide computer column"
+                        executeHandler={this.execute}
+                        librariesChanged={this.handleIframeDoc}
+                    />
+                    <Console className="sixteen wide tablet eight wide computer column" output={output}/>
                 </div>
                 <iframe
                     style={styles.iframe}

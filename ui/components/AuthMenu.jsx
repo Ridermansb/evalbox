@@ -48,14 +48,14 @@ export default class extends React.PureComponent {
             </div>}
 
             {!currentUser &&
-            <div className="item">
+            <div className="fitted item">
                 <button className="ui github black button" onClick={this.githubAuthClick}>
                     <i className="github icon"/> Github
                 </button>
             </div>
             }
             {!currentUser &&
-            <div className="fitted item">
+            <div className="item">
                 <button className="ui google plus button" onClick={this.googleAuthClick}>
                     <i className="google plus icon"/> Google
                 </button>
