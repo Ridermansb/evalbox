@@ -128,6 +128,8 @@ export default class extends React.PureComponent {
     handleIframeDoc(libraries) {
         const iFrameDoc = iFrameDocCompile(libraries.map(l => l.url));
         this.setState((prevState) => ({...prevState, iFrameDoc}));
+
+        localStorage.setItem('libraries', JSON.stringify(libraries));
     }
 
     render() {

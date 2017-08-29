@@ -15,9 +15,16 @@ export default class extends React.PureComponent {
             lineNumbers: true,
         });
         const { onChange } = this.props;
-        codeMirror.on("change", function(ed) {
-            onChange(ed.getValue())
+        codeMirror.on('change', function(ed) {
+            const code = ed.getValue();
+            localStorage.setItem('code', code);
+            onChange(code)
         });
+
+        const code = localStorage.getItem('code');
+        if (code) {
+            codeMirror.getDoc().setValue(code);
+        }
     }
     render() {
         const { className } = this.props;

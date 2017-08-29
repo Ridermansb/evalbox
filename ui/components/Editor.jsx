@@ -9,6 +9,13 @@ export default class extends React.PureComponent {
 
     state = {code: '', libraries: []};
 
+    componentDidMount() {
+        const libraries = localStorage.getItem('libraries');
+        if (libraries) {
+            this.setState((prevState) => ({ ...prevState, libraries: JSON.parse(libraries) }));
+        }
+    }
+
     @autobind
     onCodeChange(code) {
         this.setState((prevState) => ({...prevState, code }));
