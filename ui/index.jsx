@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import {render} from 'react-dom';
 import history from './history'
 import routes from './routes';
 import router from './router';
@@ -16,8 +16,9 @@ function renderComponent(component) {
 function renderLocation(location) {
     router.resolve(routes, location)
         .then(renderComponent)
-        .catch(error => router.resolve(routes, { ...location, error })
-        .then(renderComponent));
+        .catch(error => router.resolve(routes, {...location, error})
+            .then(renderComponent));
 }
+
 renderLocation(history.location);
 history.listen(render);

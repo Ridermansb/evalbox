@@ -15,7 +15,10 @@ export default class extends React.PureComponent {
 
     render() {
         const { libraries } = this.props;
-        const libraryItem = (library) => <div className="item" key={library.fileName}>
+        const libraryItem = (library) => <div
+            data-tooltip={library.url}
+            data-position="left center"
+            className="item" key={library.fileName}>
             <div className="ui teal label">
                 {library.fileName}
                 <i className="delete link icon" onClick={() => this.removeLibraryClick(library)}/>
