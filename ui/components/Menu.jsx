@@ -42,18 +42,18 @@ export default class extends React.PureComponent {
 
     @autobind
     onLibraryAdded(library) {
-        const {librariesChanged} = this.props;
+        const {onLibrariesChanged} = this.props;
         const {libraries} = this.state;
         const newLibraries = [...libraries, library];
         this.setState((prevState) => ({...prevState, libraries: newLibraries}));
-        librariesChanged(newLibraries);
+        onLibrariesChanged(newLibraries);
     }
 
     @autobind
     onLibrariesChanged(libraries) {
-        const {librariesChanged} = this.props;
+        const {onLibrariesChanged} = this.props;
         this.setState((prevState) => ({...prevState, libraries}));
-        librariesChanged(libraries);
+        onLibrariesChanged(libraries);
     }
 
     render() {

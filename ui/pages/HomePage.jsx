@@ -144,6 +144,7 @@ export default class extends React.PureComponent {
 
     @autobind
     codeChanged(code) {
+        this.setState((prevState) => ({...prevState, code}));
         const { autoRun } = this.state;
         if (autoRun && this.autoExecute) {
             this.autoExecute(code)
@@ -162,11 +163,16 @@ export default class extends React.PureComponent {
     }
 
     @autobind
-    handleIframeDoc(libraries) {
+    librariesChanged(libraries) {
         const iFrameDoc = iFrameDocCompile(libraries.map(l => l.url));
         this.setState((prevState) => ({...prevState, iFrameDoc}));
 
         localStorage.setItem('libraries', JSON.stringify(libraries));
+
+        const { autoRun, code } = this.state;
+        if (autoRun && this.autoExecute) {
+            this.autoExecute(code)
+        }
     }
 
     render() {
@@ -175,7 +181,7 @@ export default class extends React.PureComponent {
         return (
             <div className="ui container">
                 <Menu
-                    librariesChanged={this.handleIframeDoc}
+                    onLibrariesChanged={this.librariesChanged}
                     autoRun={autoRun}
                     onAutoRunChange={this.autoRunChanged}
                 />
