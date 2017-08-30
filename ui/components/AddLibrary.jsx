@@ -11,28 +11,74 @@ export default class extends React.PureComponent {
     componentDidMount() {
         const {onAdded} = this.props;
         const self = this;
-        $(this.search)
-            .search({
-                onSelect(result) {
-                    const url = `${window.location.protocol}//unpkg.com/${result.title}`;
-                    onAdded({url, fileName: result.title});
-                    self.setState({value: ''});
 
-                },
-                minCharacters: 2,
-                apiSettings: {
-                    url: 'https://api.npms.io/v2/search?q={query}',
-                    throttle: 600,
-                    onResponse(resp) {
-                        return {
-                            results: resp.results.map((it) => ({
-                                title: it.package.name,
-                                description: it.package.description
-                            }))
-                        }
+        const npmSettings = {
+            onSelect(result) {
+                const url = `${window.location.protocol}//unpkg.com/${result.title}`;
+                onAdded({url, fileName: result.title});
+                self.setState({value: ''});
+
+            },
+            minCharacters: 2,
+            apiSettings: {
+                url: 'https://api.npms.io/v2/search?q={query}',
+                throttle: 600,
+                onResponse(resp) {
+                    return {
+                        results: resp.results.map((it) => ({
+                            title: it.package.name,
+                            description: it.package.description
+                        }))
                     }
-                },
-            });
+                }
+            },
+        };
+
+        const cdnSettings = {
+            onSelect(result) {
+                const url = result.latest;
+                onAdded({url, fileName: result.title});
+                self.setState({value: ''});
+            },
+            minCharacters: 2,
+            apiSettings: {
+                url: 'https://api.cdnjs.com/libraries?search={query}&fields=name,description',
+                throttle: 600,
+                onResponse(resp) {
+                    return {
+                        results: resp.results.map((it) => ({
+                            id: it.id,
+                            title: it.name,
+                            description: it.description,
+                            latest: it.latest
+                        }))
+                    }
+                }
+            },
+        };
+
+
+        const $search = $(this.search);
+        $(this.dropDown).dropdown({
+            on: 'hover',
+            onChange: function(value) {
+                $search.search('cancel query');
+                $search.search('clear cache');
+                $search.search('destroy');
+                if (value === 'npmjs') {
+                    $search.search(npmSettings);
+                } else {
+                    $search.search(cdnSettings);
+                }
+            }
+        });
+
+        $search.search(npmSettings);
+    }
+
+    componentWillUnmount() {
+        $(this.search).search('destroy');
+        $(this.dropDown).dropdown('destroy');
     }
 
     @autobind
@@ -63,8 +109,16 @@ export default class extends React.PureComponent {
     render() {
         return <div className="ui search"
                      ref={(el) => {this.search = el;}}>
-            <div className="ui label right pointing">Add Library</div>
-            <div className="ui small input">
+
+            <div className="ui left labeled input">
+                <div className="ui dropdown label" ref={(el) => { this.dropDown = el; }}>
+                    <div className="text">npmjs</div>
+                    <i className="dropdown icon"/>
+                    <div className="menu">
+                        <div className="item">npmjs</div>
+                        <div className="item">cdnjs</div>
+                    </div>
+                </div>
                 <input type="text" value={this.state.value}
                        placeholder="lodash"
                        className="prompt"
