@@ -60,6 +60,7 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery',
             'window.jQuery': 'jquery',
+            'WeDeploy': 'WeDeploy',
         }),
         new CompressionPlugin({
             asset: '[path].gz[query]',
@@ -97,6 +98,9 @@ module.exports = {
             assets: resolve(__dirname, 'ui', 'assets'),
             components: resolve(__dirname, 'ui', 'components')
         },
+    },
+    externals: {
+        WeDeploy: 'WeDeploy'
     },
     module: {
         rules: [

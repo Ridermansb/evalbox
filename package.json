@@ -52,8 +52,7 @@
     "path-to-regexp": "^2.0.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "semantic-ui-css": "^2.2.12",
-    "wedeploy": "^3.0.2"
+    "semantic-ui-css": "^2.2.12"
   },
   "engines": {
     "node": ">=8.4.1"
