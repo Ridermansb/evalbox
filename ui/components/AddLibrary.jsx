@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 import {autobind} from 'core-decorators';
 
 export default class extends React.PureComponent {
@@ -12,14 +13,22 @@ export default class extends React.PureComponent {
         const {onAdded} = this.props;
         const self = this;
 
-        const npmSettings = {
+        const $search = $(this.search);
+
+        const searchCommumSettings = {
             onSelect(result) {
-                const url = `${window.location.protocol}//unpkg.com/${result.title}`;
+                const url = result.cdn;
                 onAdded({url, fileName: result.title});
                 self.setState({value: ''});
-
+                $search.search('set value', '');
             },
             minCharacters: 2,
+        };
+
+        // onSearchQuery(query)	module	Callback on search query
+        // onResults(response)
+
+        const npmSettings = Object.assign({}, searchCommumSettings, {
             apiSettings: {
                 url: 'https://api.npms.io/v2/search?q={query}',
                 throttle: 600,
@@ -27,38 +36,30 @@ export default class extends React.PureComponent {
                     return {
                         results: resp.results.map((it) => ({
                             title: it.package.name,
+                            cdn: `${window.location.protocol}//unpkg.com/${it.package.name}`,
                             description: it.package.description
                         }))
                     }
                 }
             },
-        };
+        });
 
-        const cdnSettings = {
-            onSelect(result) {
-                const url = result.latest;
-                onAdded({url, fileName: result.title});
-                self.setState({value: ''});
-            },
-            minCharacters: 2,
+        const cdnSettings = Object.assign({}, searchCommumSettings, {
             apiSettings: {
                 url: 'https://api.cdnjs.com/libraries?search={query}&fields=name,description',
                 throttle: 600,
                 onResponse(resp) {
                     return {
                         results: resp.results.map((it) => ({
-                            id: it.id,
                             title: it.name,
                             description: it.description,
-                            latest: it.latest
+                            cdn: it.latest
                         }))
                     }
                 }
             },
-        };
+        });
 
-
-        const $search = $(this.search);
         $(this.dropDown).dropdown({
             on: 'hover',
             onChange: function(value) {
@@ -101,16 +102,21 @@ export default class extends React.PureComponent {
 
             if (fileName) {
                 onAdded({url: value, fileName});
-                this.setState({value: ''});
+                this.setState((prevState) => ({...prevState, value: ''}));
             }
         }
     }
 
     render() {
-        return <div className="ui search"
+        const {  isLoading } = this.state;
+        const searchClassName = cx('ui', {
+            loading: isLoading
+        }, 'search');
+
+        return <div className={searchClassName}
                      ref={(el) => {this.search = el;}}>
 
-            <div className="ui left labeled input">
+            <div className="ui left labeled small input">
                 <div className="ui dropdown label" ref={(el) => { this.dropDown = el; }}>
                     <div className="text">npmjs</div>
                     <i className="dropdown icon"/>
@@ -119,7 +125,8 @@ export default class extends React.PureComponent {
                         <div className="item">cdnjs</div>
                     </div>
                 </div>
-                <input type="text" value={this.state.value}
+                <input type="text"
+                       value={this.state.value}
                        placeholder="lodash"
                        className="prompt"
                        onKeyPress={this.handleKey}
