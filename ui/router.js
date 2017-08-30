@@ -13,8 +13,12 @@ function matchURI(path, uri) {
     return params;
 }
 async function resolve(routes, context) {
+    if (context.error) {
+        throw context.error;
+    }
+
+    const uri = context.pathname;
     for (const route of routes) {
-        const uri = context.error ? '/error' : context.pathname;
         const params = matchURI(route.path, uri);
         if (!params) continue;
         const result = await route.action({ ...context, params });

@@ -8,9 +8,7 @@ export default class extends React.PureComponent {
     };
 
     componentDidMount() {
-        $(this.dropdown)
-            .dropdown()
-        ;
+        $(this.dropdown).dropdown();
     }
 
     @autobind

@@ -22,6 +22,8 @@ export default class extends React.PureComponent {
     @autobind
     onCodeChange(code) {
         this.setState((prevState) => ({...prevState, code }));
+        const { onChange } = this.props;
+        onChange(code);
     }
 
     @autobind
@@ -32,13 +34,15 @@ export default class extends React.PureComponent {
     }
 
     render() {
-        const { className } = this.props;
+        const { className, displayRunButton } = this.props;
 
         return (
             <div className={className} style={styles.root}>
-                <a className="ui small primary button" onClick={this.executeClick} style={styles.run}>
-                    <i className="right play icon"/> Run
-                </a>
+                {displayRunButton &&
+                    <a className="ui small primary button" onClick={this.executeClick} style={styles.run}>
+                        <i className="right play icon"/> Run
+                    </a>
+                }
                 <Code
                     className="ui bottom attached segment"
                     onChange={this.onCodeChange} />

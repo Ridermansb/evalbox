@@ -1,5 +1,5 @@
 import React from 'react'
-import { autobind } from 'core-decorators';
+import {autobind} from 'core-decorators';
 import logo from '../../favicon.png';
 import AuthMenu from './AuthMenu';
 import AddLibrary from './AddLibrary';
@@ -21,46 +21,65 @@ export default class extends React.PureComponent {
     componentDidMount() {
         const libraries = localStorage.getItem('libraries');
         if (libraries) {
-            this.setState((prevState) => ({ ...prevState, libraries: JSON.parse(libraries) }));
+            this.setState((prevState) => ({...prevState, libraries: JSON.parse(libraries)}));
+        }
+
+        const { autoRun, onAutoRunChange } = this.props;
+        const $autorun = $(this.autorun);
+        $autorun.checkbox({
+            onChange() {
+                const isEnabled = $autorun.checkbox('is checked');
+                onAutoRunChange(isEnabled);
+            }
+        });
+
+        if (autoRun) {
+            $autorun.checkbox('set checked');
+        } else {
+            $autorun.checkbox('set unchecked');
         }
     }
 
     @autobind
     onLibraryAdded(library) {
-        const { librariesChanged } = this.props;
-        const { libraries } = this.state;
-        const newLibraries = [ ...libraries, library];
-        this.setState((prevState) => ({ ...prevState, libraries: newLibraries }));
+        const {librariesChanged} = this.props;
+        const {libraries} = this.state;
+        const newLibraries = [...libraries, library];
+        this.setState((prevState) => ({...prevState, libraries: newLibraries}));
         librariesChanged(newLibraries);
     }
 
     @autobind
     onLibrariesChanged(libraries) {
-        const { librariesChanged } = this.props;
-        this.setState((prevState) => ({ ...prevState, libraries }));
+        const {librariesChanged} = this.props;
+        this.setState((prevState) => ({...prevState, libraries}));
         librariesChanged(libraries);
     }
 
     render() {
-        const { libraries } = this.state;
+        const {libraries} = this.state;
 
         const hasLibraries = libraries && libraries.length > 0;
 
         return <div className="ui borderless menu" style={styles.menu}>
-                <a href="/" className="header item">
-                    <img src={logo}/> Evalbox
-                </a>
-                <div className="item">
-                    <AddLibrary onAdded={this.onLibraryAdded} />
-                </div>
-                {hasLibraries &&
-                    <Libraries className="fitted item"
-                        libraries={libraries}
-                        onChange={this.onLibrariesChanged} />
-                }
-                <div className="right menu">
-                    <AuthMenu className="item"/>
-                </div>
+            <a href="/" className="header item">
+                <img src={logo}/> Evalbox
+            </a>
+            <div className="item">
+                <AddLibrary onAdded={this.onLibraryAdded}/>
             </div>
+            {hasLibraries &&
+            <Libraries className="fitted item"
+                       libraries={libraries}
+                       onChange={this.onLibrariesChanged}/>
+            }
+            <div className="right menu">
+                <div className="ui item toggle checkbox" ref={(el) => { this.autorun = el; }}>
+                    <input type="checkbox"/>
+                    <label>Auto run</label>
+                </div>
+                <AuthMenu className="item"/>
+            </div>
+        </div>
     }
 }

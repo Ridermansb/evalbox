@@ -9,6 +9,8 @@ const styles = {
 };
 
 export default class extends React.PureComponent {
+    static displayName = 'Code';
+
     componentDidMount() {
         const codeMirror = cm.fromTextArea(this.editor, {
             mode: 'javascript',

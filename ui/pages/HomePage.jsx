@@ -98,16 +98,36 @@ const iFrameDocCompile = (scripts = []) => {
 </html>`
 };
 
+/**
+ * https://stackoverflow.com/a/44913401/491181
+ */
+const debounce = (fn, delay) => {
+    let timer;
+    return (...args) => {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn.apply(null, args)
+        }, delay)
+    }
+};
+
 export default class extends React.PureComponent {
     static displayName = 'Home';
 
     state = {
         output: '',
+        autoRun: true,
         iFrameDoc: iFrameDocCompile()
     };
 
     componentDidMount() {
         window.addEventListener('message', this.onMessage);
+        this.autoExecute = debounce(this.execute, 800);
+
+        const code = localStorage.getItem('code');
+        if (code) {
+            this.execute(code);
+        }
     }
 
     componentWillUnmount() {
@@ -117,10 +137,22 @@ export default class extends React.PureComponent {
     @autobind
     onMessage(e) {
         const frame = this.sandboxed;
-        console.log('message .. ', e);
         if (e.origin === "null" && e.source === frame.contentWindow) {
             this.setState((prevState) => ({...prevState, output: e.data}));
         }
+    }
+
+    @autobind
+    codeChanged(code) {
+        const { autoRun } = this.state;
+        if (autoRun && this.autoExecute) {
+            this.autoExecute(code)
+        }
+    }
+
+    @autobind
+    autoRunChanged(autoRun) {
+        this.setState((prevState) => ({...prevState, autoRun}));
     }
 
     @autobind
@@ -138,17 +170,22 @@ export default class extends React.PureComponent {
     }
 
     render() {
-        const {output, iFrameDoc} = this.state;
+        const {output, iFrameDoc, autoRun} = this.state;
 
         return (
             <div className="ui container">
-                <Menu librariesChanged={this.handleIframeDoc}/>
+                <Menu
+                    librariesChanged={this.handleIframeDoc}
+                    autoRun={autoRun}
+                    onAutoRunChange={this.autoRunChanged}
+                />
                 <div className="ui stackable two column grid">
-                    <Editor
-                        className="column"
-                        executeHandler={this.execute}
+                    <Editor className="column"
+                            executeHandler={this.execute}
+                            onChange={this.codeChanged}
+                            displayRunButton={!autoRun}
                     />
-                    <Console className="column" output={output}/>
+                    <Console className="column" output={output} />
                 </div>
                 <iframe
                     style={styles.iframe}
