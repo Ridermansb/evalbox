@@ -1,6 +1,6 @@
 > Evaluate Javascript code safely with Iframe Sandbox
 
-![Demo](demo.png)
+![Demo](demo.gif)
 
 *Read more about [sandbox here][1]*
 
