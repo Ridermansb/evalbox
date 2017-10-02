@@ -195,7 +195,7 @@ export default class extends React.PureComponent {
                 </div>
                 <iframe
                     style={styles.iframe}
-                    sandbox='allow-scripts'
+                    sandbox='allow-scripts allow-same-origin allow-forms'
                     ref={(el) => {
                         this.sandboxed = el;
                     }}
