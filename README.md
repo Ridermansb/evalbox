@@ -1,3 +1,6 @@
+**This help you in some way?** [Buy me a cofffe][coffee]  :)   
+https://buymeacoff.ee/ridermansb
+
 > Evaluate Javascript code safely with Iframe Sandbox
 
 ![Demo](demo.gif)
@@ -10,3 +13,4 @@
  - `npm run start`
 
 [1]: https://www.html5rocks.com/en/tutorials/security/sandboxed-iframes/
+[coffee]: https://buymeacoff.ee/ridermansb
