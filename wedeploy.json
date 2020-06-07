@@ -1,9 +1,0 @@
-{
-    "id": "ui",
-    "image": "wedeploy/hosting:0.0.1",
-    "env": {
-        "WEDEPLOY_WEB_PATH": "dist",
-        "WEDEPLOY_AUTH_GITHUB": "true",
-        "WEDEPLOY_AUTH_GOOGLE": "true"
-    }
-}

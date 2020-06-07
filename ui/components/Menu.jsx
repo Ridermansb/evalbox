@@ -78,7 +78,6 @@ export default class extends React.PureComponent {
                     <input type="checkbox"/>
                     <label>Auto run</label>
                 </div>
-                <AuthMenu className="item"/>
             </div>
         </div>
     }

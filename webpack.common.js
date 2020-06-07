@@ -23,11 +23,6 @@ module.exports = {
     plugins: [
         new webpack.EnvironmentPlugin({
             NODE_ENV: 'development',
-            WEDEPLOY_AUTH_URL: 'auth-evalbox.wedeploy.io',
-            WEDEPLOY_AUTH_GOOGLE_CLIENT_ID: '',
-            WEDEPLOY_AUTH_GOOGLE_CLIENT_SECRET: '',
-            WEDEPLOY_AUTH_GITHUB_CLIENT_ID: '',
-            WEDEPLOY_AUTH_GITHUB_CLIENT_SECRET: ''
         }),
         new webpack.DefinePlugin({
             "require.specified": "require.resolve"
