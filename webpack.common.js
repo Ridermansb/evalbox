@@ -4,7 +4,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { resolve } = require('path');
 
 require('dotenv').config();
@@ -22,7 +21,6 @@ module.exports = {
         sourceMapFilename: `[name].js.map`,
     },
     plugins: [
-        new CleanWebpackPlugin(['dist']),
         new webpack.EnvironmentPlugin({
             NODE_ENV: 'development',
             WEDEPLOY_AUTH_URL: 'auth-evalbox.wedeploy.io',
