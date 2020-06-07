@@ -30,7 +30,6 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Evalbox',
             template: resolve(__dirname, 'ui', 'index.tpl.html'),
-            chunksSortMode: 'dependency',
             minify: { collapseWhitespace: true },
         }),
         new FaviconsWebpackPlugin({
@@ -53,36 +52,12 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery',
             'window.jQuery': 'jquery',
-            'WeDeploy': 'WeDeploy',
         }),
         new CompressionPlugin({
-            asset: '[path].gz[query]',
             algorithm: 'gzip',
             test: /\.(js|html)$/,
             threshold: 10240,
             minRatio: 0.8,
-        }),
-
-        // used to split out our sepcified vendor script
-        // https://brotzky.co/blog/code-splitting-react-router-webpack-2/
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
-            minChunks: Infinity,
-            filename: '[name].[hash].js',
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'node-static',
-            filename: 'node-static.js',
-            minChunks(module) {
-                const context = module.context;
-                return context && context.indexOf('node_modules') >= 0;
-            },
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-            async: 'used-twice',
-            minChunks(module, count) {
-                return count >= 2;
-            },
         }),
     ],
     resolve: {
@@ -91,9 +66,6 @@ module.exports = {
             assets: resolve(__dirname, 'ui', 'assets'),
             components: resolve(__dirname, 'ui', 'components')
         },
-    },
-    externals: {
-        WeDeploy: 'WeDeploy'
     },
     module: {
         rules: [
@@ -109,7 +81,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                loaders: ['style-loader', 'css-loader'],
+                use: ['style-loader', 'css-loader'],
             },
             {
                 test: /\.(eot|woff|woff2|ttf)$/,
@@ -124,7 +96,7 @@ module.exports = {
             },
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,
-                loaders: [
+                use: [
                     {
                         loader: 'file-loader',
                         query: {outputPath: 'assets/images/'},

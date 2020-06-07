@@ -1,7 +1,6 @@
 import React from 'react'
 import {autobind} from 'core-decorators';
 import logo from '../../favicon.png';
-import AuthMenu from './AuthMenu';
 import AddLibrary from './AddLibrary';
 import Libraries from './Libraries'
 

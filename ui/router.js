@@ -1,8 +1,8 @@
-import toRegex from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp';
 
 function matchURI(path, uri) {
     const keys = [];
-    const pattern = toRegex(path, keys); // TODO: Use caching
+    const pattern = pathToRegexp(path, keys); // TODO: Use caching
     const match = pattern.exec(uri);
     if (!match) return null;
     const params = Object.create(null);

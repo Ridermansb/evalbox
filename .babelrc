@@ -1,43 +1,17 @@
 {
   "presets": [
-    [
-      "env",
-      {
-        "loose": true,
-        "useBuiltIns": true,
-
-        "production": {
-          "presets": [
-            ["env", {
-              "targets": {"node": "current", "browsers": "> 5%"}
-            }]
-          ]
-        },
-        "development": {
-          "sourceMaps" : true,
-          "presets": [
-            ["env", {
-              "targets": {"node": "current", "browsers": "last 1 chrome version"}
-            }]
-          ]
-        },
-        "test": {
-          "sourceMaps" : true,
-          "presets": [
-            ["env", {
-              "targets": {"node": "current"}
-            }]
-          ]
-        }
-      }
-    ],
-    "react"
+    ["@babel/preset-env", {
+      "targets": {"node": "current", "browsers": "> 5%"}
+    }],
+    "@babel/preset-react"
   ],
   "plugins": [
-    "transform-runtime",
-    "transform-decorators-legacy",
-    "transform-class-properties",
-    "transform-object-rest-spread",
+    "@babel/plugin-transform-runtime",
+    ["@babel/plugin-proposal-decorators", {
+      "legacy": true
+    }],
+    ["@babel/plugin-proposal-class-properties", { "loose" : true }],
+    "@babel/plugin-proposal-object-rest-spread",
     "es6-promise",
     ["module-resolver", {
       "root": ["."]
