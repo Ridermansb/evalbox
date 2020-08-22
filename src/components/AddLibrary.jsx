@@ -1,19 +1,20 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import cx from 'classnames';
+import PropTypes from 'prop-types';
 
-const AddLibrary = ({onAdded}) => {
-    const [isLoading, setIsLoading] = useState(true);
+const AddLibrary = ({ onAdded }) => {
+    const [isLoading] = useState(true);
     const [value, setValue] = useState('');
 
-    const searchRef = useRef();
-    const dropDownRef = useRef();
+    const searchReference = useRef();
+    const dropDownReference = useRef();
 
     useEffect(() => {
-        const $search = $(searchRef.current);
+        const $search = $(searchReference.current);
         const searchCommonSettings = {
             onSelect(result) {
                 const url = result.cdn;
-                onAdded({url, fileName: result.title});
+                onAdded({ url, fileName: result.title });
                 setValue('');
                 $search.search('set value', '');
             },
@@ -32,30 +33,31 @@ const AddLibrary = ({onAdded}) => {
                         results: resp.results.map((it) => ({
                             title: it.package.name,
                             cdn: `${window.location.protocol}//unpkg.com/${it.package.name}`,
-                            description: it.package.description
-                        }))
-                    }
-                }
+                            description: it.package.description,
+                        })),
+                    };
+                },
             },
         });
 
         const cdnSettings = Object.assign({}, searchCommonSettings, {
             apiSettings: {
-                url: 'https://api.cdnjs.com/libraries?search={query}&fields=name,description',
+                url:
+                    'https://api.cdnjs.com/libraries?search={query}&fields=name,description',
                 throttle: 600,
                 onResponse(resp) {
                     return {
                         results: resp.results.map((it) => ({
                             title: it.name,
                             description: it.description,
-                            cdn: it.latest
-                        }))
-                    }
-                }
+                            cdn: it.latest,
+                        })),
+                    };
+                },
             },
         });
 
-        const $dropDown = $(dropDownRef.current)
+        const $dropDown = $(dropDownReference.current);
         $dropDown.dropdown({
             on: 'hover',
             onChange: function (value) {
@@ -67,66 +69,74 @@ const AddLibrary = ({onAdded}) => {
                 } else {
                     $search.search(cdnSettings);
                 }
-            }
+            },
         });
         $search.search(npmSettings);
 
         return () => {
             $search.search('destroy');
             $dropDown.dropdown('destroy');
-        }
+        };
+    }, [onAdded]);
 
-    }, [])
-
-    const handleChange = useCallback(event => {
+    const handleChange = useCallback((event) => {
         const value = event.target.value;
-        setValue(value)
+        setValue(value);
     }, []);
 
-    const handleKey = useCallback(e => {
-        if (e.charCode === 13) {
-            const splited = value.split('/');
-            let fileName = splited.pop();
-            if (!fileName || fileName.trim() === '') {
-                fileName = splited.pop();
-            }
+    const handleKey = useCallback(
+        (event) => {
+            if (event.charCode === 13) {
+                const splited = value.split('/');
+                let fileName = splited.pop();
+                if (!fileName || fileName.trim() === '') {
+                    fileName = splited.pop();
+                }
 
-            if (fileName) {
-                onAdded({url: value, fileName});
-                setValue('');
+                if (fileName) {
+                    onAdded({ url: value, fileName });
+                    setValue('');
+                }
             }
-        }
-    }, []);
+        },
+        [onAdded, value]
+    );
 
-    const searchClassName = cx('ui', {
-        loading: isLoading
-    }, 'search');
+    const searchClassName = cx(
+        'ui',
+        {
+            loading: isLoading,
+        },
+        'search'
+    );
 
     return (
-        <div className={searchClassName}
-             ref={searchRef}>
-
+        <div className={searchClassName} ref={searchReference}>
             <div className="ui left labeled small input">
-                <div className="ui dropdown label" ref={dropDownRef}>
+                <div className="ui dropdown label" ref={dropDownReference}>
                     <div className="text">npmjs</div>
-                    <i className="dropdown icon"/>
+                    <i className="dropdown icon" />
                     <div className="menu">
                         <div className="item">npmjs</div>
                         <div className="item">cdnjs</div>
                     </div>
                 </div>
-                <input type="text"
-                       value={value}
-                       placeholder="lodash"
-                       className="prompt"
-                       onKeyPress={handleKey}
-                       onChange={handleChange}
+                <input
+                    type="text"
+                    value={value}
+                    placeholder="lodash"
+                    className="prompt"
+                    onKeyPress={handleKey}
+                    onChange={handleChange}
                 />
             </div>
         </div>
-    )
-}
+    );
+};
 
 AddLibrary.displayName = 'AddLibrary';
+AddLibrary.propTypes = {
+    onAdded: PropTypes.func.isRequired,
+};
 
-export default AddLibrary
+export default AddLibrary;

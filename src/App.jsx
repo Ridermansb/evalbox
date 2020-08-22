@@ -1,24 +1,26 @@
-import {hot} from 'react-hot-loader/root';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import { hot } from 'react-hot-loader/root';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Editor from '@components/Editor';
 import Console from '@components/Console';
 import Menu from '@components/Menu';
 
 const styles = {
     iframe: {
-        display: 'none'
+        display: 'none',
     },
     fork: {
-        'position': 'absolute',
-        'top': 0, 'left': 0, 'border': 0,
-    }
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        border: 0,
+    },
 };
 
-const iFrameDocCompile = (scripts = []) => {
-    const tagScripts = scripts.reduce((acc, next) => {
-        acc += `<script async=false src="${next}" ></script>`;
-        return acc;
-    }, '');
+const iFrameDocumentCompile = (scripts = []) => {
+    let tagScripts = '';
+    for (let script of scripts) {
+        tagScripts += `<script async=false src="${script}" ></script>`;
+    }
 
     return `<!DOCTYPE html>
 <html lang="en-US">
@@ -95,7 +97,7 @@ const iFrameDocCompile = (scripts = []) => {
 </head>
 <body>
 </body>
-</html>`
+</html>`;
 };
 
 /**
@@ -103,42 +105,49 @@ const iFrameDocCompile = (scripts = []) => {
  */
 const debounce = (fn, delay) => {
     let timer;
-    return (...args) => {
+    return (...arguments_) => {
         if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
-            fn.apply(null, args)
-        }, delay)
-    }
+            fn.apply(null, arguments_);
+        }, delay);
+    };
 };
 
 const App = () => {
-
     const [output, setOutput] = useState('');
     const [code, setCode] = useState('');
     const [autoRun, setAutoRun] = useState(true);
-    const [iFrameDoc, setIFrameDoc] = useState(iFrameDocCompile());
-    const sandboxRef = useRef(null);
+    const [iFrameDocument, setIFrameDocument] = useState(
+        iFrameDocumentCompile()
+    );
+    const sandboxReference = useRef(null);
 
-    const handleOnMessage = useCallback((e) => {
-        if (e.origin === "null" && e.source === sandboxRef.current.contentWindow) {
-            setOutput(e.data)
+    const handleOnMessage = useCallback((event) => {
+        if (
+            event.origin === 'null' &&
+            event.source === sandboxReference.current.contentWindow
+        ) {
+            setOutput(event.data);
         }
     }, []);
 
-    const execute = useCallback(code => {
-        sandboxRef.current.contentWindow.postMessage(code, '*');
+    const execute = useCallback((code) => {
+        sandboxReference.current.contentWindow.postMessage(code, '*');
     }, []);
-    const autoExecute = useRef(debounce(execute, 1000))
+    const autoExecute = useRef(debounce(execute, 1000));
 
-    const codeChanged = useCallback(code => {
-        setCode(code)
-        if (autoRun && autoExecute.current) {
-            autoExecute.current(code)
-        }
-    }, []);
+    const codeChanged = useCallback(
+        (code) => {
+            setCode(code);
+            if (autoRun && autoExecute.current) {
+                autoExecute.current(code);
+            }
+        },
+        [autoRun]
+    );
 
-    const autoRunChanged = useCallback(autoRun => {
-        setAutoRun(autoRun)
+    const autoRunChanged = useCallback((autoRun) => {
+        setAutoRun(autoRun);
     }, []);
 
     useEffect(() => {
@@ -151,17 +160,22 @@ const App = () => {
 
         return () => {
             window.removeEventListener('message', handleOnMessage);
-        }
-    }, []);
+        };
+    }, [execute, handleOnMessage]);
 
-    const librariesChanged = useCallback(libraries => {
-        const iFrameDoc = iFrameDocCompile(libraries.map(l => l.url));
-        setIFrameDoc(iFrameDoc);
-        localStorage.setItem('libraries', JSON.stringify(libraries));
-        if (autoRun && autoExecute.current) {
-            autoExecute.current(code)
-        }
-    }, []);
+    const librariesChanged = useCallback(
+        (libraries) => {
+            const iFrameDocument_ = iFrameDocumentCompile(
+                libraries.map((l) => l.url)
+            );
+            setIFrameDocument(iFrameDocument_);
+            localStorage.setItem('libraries', JSON.stringify(libraries));
+            if (autoRun && autoExecute.current) {
+                autoExecute.current(code);
+            }
+        },
+        [autoRun, code]
+    );
 
     return (
         <div className="ui container">
@@ -171,22 +185,24 @@ const App = () => {
                 onAutoRunChange={autoRunChanged}
             />
             <div className="ui stackable two column grid">
-                <Editor className="column"
-                        executeHandler={execute}
-                        onChange={codeChanged}
-                        displayRunButton={!autoRun}
+                <Editor
+                    className="column"
+                    executeHandler={execute}
+                    onChange={codeChanged}
+                    displayRunButton={!autoRun}
                 />
-                <Console className="column" output={output}/>
+                <Console className="column" output={output} />
             </div>
             <iframe
                 style={styles.iframe}
-                sandbox='allow-scripts allow-same-origin allow-forms'
-                ref={sandboxRef}
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                ref={sandboxReference}
                 src="about:blank"
-                srcDoc={iFrameDoc}/>
+                srcDoc={iFrameDocument}
+            />
         </div>
     );
-}
+};
 
 App.displayName = 'App';
 

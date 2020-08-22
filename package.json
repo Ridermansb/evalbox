@@ -11,7 +11,8 @@
   "license": "ISC",
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "cross-env NODE_ENV=production webpack -p"
+    "build": "cross-env NODE_ENV=production webpack -p",
+    "lint": "eslint --ext .js --ext .jsx src"
   },
   "devDependencies": {
     "@babel/core": "^7.11.4",
@@ -36,6 +37,17 @@
     "cross-env": "^7.0.2",
     "css-loader": "^4.2.1",
     "dotenv": "^8.2.0",
+    "eslint": "^7.7.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-array-func": "^3.1.7",
+    "eslint-plugin-compat": "^3.8.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.20.6",
+    "eslint-plugin-react-hooks": "^4.1.0",
+    "eslint-plugin-react-perf": "^3.2.4",
+    "eslint-plugin-unicorn": "^21.0.0",
     "favicons-webpack-plugin": "^4.2.0",
     "file-loader": "^6.0.0",
     "git-revision-webpack-plugin": "^3.0.6",
@@ -44,6 +56,8 @@
     "image-webpack-loader": "^6.0.0",
     "mem": "^6.1.0",
     "mini-css-extract-plugin": "^0.10.0",
+    "prettier": "^2.0.5",
+    "prop-types": "^15.7.2",
     "react-hot-loader": "^4.12.21",
     "style-loader": "^1.2.1",
     "terser-webpack-plugin": "^4.1.0",
