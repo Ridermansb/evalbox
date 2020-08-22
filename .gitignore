@@ -267,3 +267,4 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/webstorm,osx,windows,vim,intellij,node,npm,intellij+iml,env
 
 dist/
+.idea/

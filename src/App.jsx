@@ -1,8 +1,9 @@
+import { hot } from 'react-hot-loader/root';
 import React from 'react';
 import {autobind} from 'core-decorators';
-import Editor from 'ui/components/Editor';
-import Console from 'ui/components/Console';
-import Menu from 'ui/components/Menu';
+import Editor from '@components/Editor';
+import Console from '@components/Console';
+import Menu from '@components/Menu';
 
 const styles = {
     iframe: {
@@ -21,7 +22,7 @@ const iFrameDocCompile = (scripts = []) => {
     }, '');
 
     return `<!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
     <title>Evalbox's Frame</title>
     ${tagScripts}
@@ -29,12 +30,12 @@ const iFrameDocCompile = (scripts = []) => {
 
         function formatString() {
           
-          var formatRegExp = /%[sdj%]/g;
+          let formatRegExp = /%[sdj%]/g;
                     
-          var i = 1;
-          var args = arguments;
-          var len = args.length;
-          var str = String(args[0]).replace(formatRegExp, function(x) {
+          let i = 1;
+          let args = arguments;
+          let len = args.length;
+          let str = String(args[0]).replace(formatRegExp, function(x) {
             if (x === '%%') return '%';
             if (i >= len) return x;
             switch (x) {
@@ -50,7 +51,7 @@ const iFrameDocCompile = (scripts = []) => {
                 return x;
             }
           });
-          for (var x = args[i]; i < len; x = args[++i]) {
+          for (let x = args[i]; i < len; x = args[++i]) {
             if (isNull(x) || !isObject(x)) {
               str += ' ' + x;
             } else {
@@ -60,11 +61,11 @@ const iFrameDocCompile = (scripts = []) => {
           return str;
         }
 
-        var executionId;
+        let executionId;
         window.addEventListener('message', function (e) {
             
-            var mainWindow = e.source;
-            var result = '';
+            let mainWindow = e.source;
+            let result = '';
             
             if (executionId){
                 clearInterval(executionId);
@@ -73,7 +74,7 @@ const iFrameDocCompile = (scripts = []) => {
             
             try {
                 // From https://stackoverflow.com/a/44073447/491181
-                var cons = {
+                let cons = {
                     log: (...args) => {
                         result += formatString.apply(this, args) + '\\n'
                     },
@@ -83,7 +84,7 @@ const iFrameDocCompile = (scripts = []) => {
                 result = 'Error: ' + e.message + '\\n' + e.stack;
             }
             mainWindow.postMessage(result, e.origin);
-            var cacheResult = '';
+            let cacheResult = '';
             executionId = setInterval(() => {
                 if (cacheResult !== result) {
                   mainWindow.postMessage(result, e.origin);
@@ -111,8 +112,8 @@ const debounce = (fn, delay) => {
     }
 };
 
-export default class extends React.PureComponent {
-    static displayName = 'Home';
+class App extends React.PureComponent {
+    static displayName = 'App';
 
     state = {
         output: '',
@@ -205,3 +206,6 @@ export default class extends React.PureComponent {
         );
     }
 }
+
+
+export default __DEVELOPMENT__ ? hot(App) : App;

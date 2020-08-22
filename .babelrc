@@ -1,20 +1,62 @@
 {
   "presets": [
-    ["@babel/preset-env", {
-      "targets": {"node": "current", "browsers": "> 5%"}
-    }],
-    "@babel/preset-react"
+    [
+      "@babel/preset-env",
+      {
+        "modules": false,
+        "loose": true,
+        "targets": {}
+      }
+    ]
   ],
   "plugins": [
-    "@babel/plugin-transform-runtime",
-    ["@babel/plugin-proposal-decorators", {
-      "legacy": true
-    }],
-    ["@babel/plugin-proposal-class-properties", { "loose" : true }],
-    "@babel/plugin-proposal-object-rest-spread",
-    "es6-promise",
-    ["module-resolver", {
-      "root": ["."]
-    }]
-  ]
+    ["@babel/plugin-proposal-decorators", {"legacy": true}],
+    ["@babel/plugin-proposal-class-properties", { "loose" : true, "spec": true }],
+    ["@babel/plugin-transform-runtime"],
+    [
+      "module-resolver",
+      {
+        "root": ["."],
+        "extensions": [".js", ".jsx"],
+        "alias": {
+          "^@components/(.+)": "./src/components/\\1",
+          "^@assets/(.+)": "./src/assets/\\1"
+        }
+      }
+    ],
+    "@babel/plugin-transform-react-jsx",
+    ["@babel/plugin-proposal-object-rest-spread", {"loose": true, "useBuiltIns": true}],
+    ["@babel/plugin-transform-destructuring", {"loose": true, "useBuiltIns": true}],
+    ["transform-react-remove-prop-types"]
+  ],
+  "env": {
+    "development": {
+      "sourceMaps": true,
+      "plugins": [
+        "react-hot-loader/babel",
+        "@babel/plugin-transform-react-jsx-source",
+        "@babel/plugin-transform-react-display-name"
+      ]
+    },
+    "test": {
+      "sourceMaps": true,
+      "plugins": [
+        "@babel/plugin-transform-modules-commonjs"
+      ],
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "modules": "commonjs",
+            "useBuiltIns": "entry",
+            "corejs": 3,
+            "targets": {
+              "node": "current",
+              "browsers": "defaults, not dead"
+            }
+          }
+        ]
+      ]
+    }
+  }
 }
