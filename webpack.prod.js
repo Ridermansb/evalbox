@@ -1,10 +1,9 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const common = require('./webpack.common.js');
 
-module.exports = merge(common, {
+module.exports = merge.merge(common, {
     devtool: 'cheap-module-source-map',
     optimization: {
         moduleIds: 'hashed',
@@ -43,10 +42,6 @@ module.exports = merge(common, {
         ],
     },
     plugins: [
-        new ExtractTextPlugin({
-            filename: `[name].css`,
-            allChunks: true,
-        }),
         new webpack.optimize.OccurrenceOrderPlugin(),
     ]
 });

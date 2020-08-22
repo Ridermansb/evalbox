@@ -6,7 +6,7 @@ const { join } = require('path');
 const host = 'localhost';
 const port = 6003;
 
-module.exports = merge(common, {
+module.exports = merge.merge(common, {
     devtool: 'inline-source-map',
     entry: {
         app: [
