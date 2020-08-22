@@ -3,13 +3,14 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const merge = require('webpack-merge');
 const { resolve } = require('path');
 const package_ = require('./package.json');
-const webpackProductionConfig = require('./webpack.production')
-const webpackDevelopmentConfig = require('./webpack.development')
+const webpackProductionConfig = require('./webpack.production');
+const webpackDevelopmentConfig = require('./webpack.development');
 
 /**
  * Assume version as git describe
@@ -21,8 +22,8 @@ require('dotenv').config();
 
 const sourceFolder = resolve(__dirname, 'src');
 
-module.exports = function(environment, opts) {
-    const mode = opts.mode || 'development';
+module.exports = function (environment, options) {
+    const mode = options.mode || 'development';
     const appVersion = gitRevisionPlugin.version();
     console.log(
         'Building version "%s" with webpack in "%s" mode',
@@ -36,8 +37,11 @@ module.exports = function(environment, opts) {
             vendor: ['react', 'react-dom', 'semantic-ui-css'],
         },
         plugins: [
+            new CopyWebpackPlugin({
+                patterns: [{ from: './src/assets/favicons/', to: './' }],
+            }),
             new webpack.DefinePlugin({
-                "require.specified": "require.resolve",
+                'require.specified': 'require.resolve',
                 __VERSION__: JSON.stringify(appVersion),
                 __DEVELOPMENT__: JSON.stringify(mode === 'development'),
                 __PRODUCTION__: JSON.stringify(mode === 'production'),
@@ -47,13 +51,13 @@ module.exports = function(environment, opts) {
             }),
             new HtmlWebpackPlugin({
                 title: 'EvalBox',
-                favicon: resolve(sourceFolder, '../favicon.png'),
+                favicon: resolve(sourceFolder, 'assets/favicons/favicon.svg'),
                 template: resolve(__dirname, 'src', 'index.ejs'),
-                minify: {collapseWhitespace: true},
+                minify: { collapseWhitespace: true },
                 inlineSource: 'runtime.+\\.js',
             }),
             new FaviconsWebpackPlugin({
-                logo: resolve(__dirname, 'favicon.png'),
+                logo: resolve(sourceFolder, 'assets/favicons/favicon.svg'),
                 persistentCache: true,
                 cache: true,
                 inject: true,
@@ -109,26 +113,25 @@ module.exports = function(environment, opts) {
                     use: [
                         {
                             loader: 'file-loader',
-                            query: {outputPath: 'assets/images/'},
+                            query: { outputPath: 'assets/images/' },
                         },
                         {
                             loader: 'image-webpack-loader',
                             options: {
                                 query: {
                                     progressive: true,
-                                    pngquant: {quality: '65-90', speed: 4},
-                                    mozjpeg: {progressive: true},
-                                    gifsicle: {interlaced: true},
-                                    optipng: {optimizationLevel: 7},
+                                    pngquant: { quality: '65-90', speed: 4 },
+                                    mozjpeg: { progressive: true },
+                                    gifsicle: { interlaced: true },
+                                    optipng: { optimizationLevel: 7 },
                                 },
                             },
                         },
-                    ]
+                    ],
                 },
-            ]
-        }
+            ],
+        },
     };
-
 
     const modeConfig = {
         production: webpackProductionConfig,

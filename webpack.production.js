@@ -3,15 +3,15 @@
 const webpack = require('webpack');
 const TerserJSPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const {resolve} = require('path');
+const { resolve } = require('path');
 
-const srcFolder = resolve(__dirname, 'src');
+const sourceFolder = resolve(__dirname, 'src');
 
 module.exports = {
     cache: true,
     mode: 'production',
     devtool: 'hidden-source-map',
-    entry: srcFolder,
+    entry: sourceFolder,
     output: {
         path: resolve('dist'),
         filename: '[name]-[contenthash:8].js',
