@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import cx from 'classnames';
 import Clipboard from 'clipboard';
 
@@ -17,12 +17,15 @@ const styles = {
     }
 };
 
-export default class extends React.PureComponent {
-    static displayName = 'Console';
+const Console = ({output, className}) => {
 
-    componentDidMount() {
+    const handleCopySuccessfully = useCallback((e) => {
+        e.clearSelection();
+    }, [])
+
+    useEffect(() => {
         const self = this;
-        this.clipboard = new Clipboard('.copyButton', {
+        const clipboard = new Clipboard('.copyButton', {
             target() {
                 return document.getElementsByClassName('copyButton')[0];
             },
@@ -31,36 +34,36 @@ export default class extends React.PureComponent {
                 return output;
             }
         });
-        this.clipboard.on('success', function (e) {
-            e.clearSelection();
-        });
-    }
+        clipboard.on('success', handleCopySuccessfully);
 
-    componentWillUnmount() {
-        this.clipboard.destroy();
-    }
+        return () => {
+            clipboard.off('success', handleCopySuccessfully);
+            clipboard.destroy();
+        }
+    });
 
-    render() {
-        const {output, className} = this.props;
+    const isError = errorRegex.test(output);
+    const outputClassName = cx('ui', {
+        'red': isError,
+    }, 'bottom attached secondary segment');
 
-        const isError = errorRegex.test(output);
-        const outputClassName = cx('ui', {
-            'red': isError,
-        }, 'bottom attached secondary segment');
+    const clipboardCopyIsSupport = Clipboard.isSupported();
 
-        const clipboardCopyIsSupport = Clipboard.isSupported();
-
-        return (
-            <div className={className} style={styles.root}>
-                {clipboardCopyIsSupport &&
-                    <a className="ui icon button copyButton" style={styles.copy}>
-                        <i className="copy icon"/>
-                    </a>
-                }
-                <div className={outputClassName} style={styles.output}>
-                    {output}
-                </div>
+    return (
+        <div className={className} style={styles.root}>
+            {clipboardCopyIsSupport &&
+            <a className="ui icon button copyButton" style={styles.copy}>
+                <i className="copy icon"/>
+            </a>
+            }
+            <div className={outputClassName} style={styles.output}>
+                {output}
             </div>
-        );
-    }
+        </div>
+    );
 }
+
+Console.displayName = 'Console';
+
+
+export default Console;

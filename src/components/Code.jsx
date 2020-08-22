@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useCallback, useEffect, useRef} from 'react'
 import cm from 'codemirror';
 import 'codemirror/mode/javascript/javascript';
 
@@ -8,34 +8,37 @@ const styles = {
     }
 };
 
-export default class extends React.PureComponent {
-    static displayName = 'Code';
+const Code = ({onChange, className}) => {
 
-    componentDidMount() {
-        const codeMirror = cm.fromTextArea(this.editor, {
+    const editorRef = useRef(null);
+
+    const handleCodeChanged = useCallback(edCodeMirror => {
+        const code = edCodeMirror.getValue();
+        localStorage.setItem('code', code);
+        onChange(code)
+    }, []);
+
+    useEffect(() => {
+        const codeMirror = cm.fromTextArea(editorRef.current, {
             mode: 'javascript',
             lineNumbers: true,
         });
-        const { onChange } = this.props;
-        codeMirror.on('change', function(ed) {
-            const code = ed.getValue();
-            localStorage.setItem('code', code);
-            onChange(code)
-        });
-
+        codeMirror.on('change', handleCodeChanged);
         const code = localStorage.getItem('code');
         if (code) {
             codeMirror.getDoc().setValue(code);
             onChange(code)
         }
-    }
-    render() {
-        const { className } = this.props;
-        return <div className={`ui ${className} form`} style={styles.code}>
+    }, [])
+
+    return <div className={`ui ${className} form`} style={styles.code}>
             <textarea
                 autoComplete='off'
-                ref={(el) => {this.editor = el;}}
+                ref={editorRef}
             />
-        </div>
-    }
+    </div>
 }
+
+Code.displayName = 'Code';
+
+export default Code;

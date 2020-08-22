@@ -10,7 +10,6 @@
     ]
   ],
   "plugins": [
-    ["@babel/plugin-proposal-decorators", {"legacy": true}],
     ["@babel/plugin-proposal-class-properties", { "loose" : true, "spec": true }],
     ["@babel/plugin-transform-runtime"],
     [

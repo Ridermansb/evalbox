@@ -1,6 +1,5 @@
-import { hot } from 'react-hot-loader/root';
-import React from 'react';
-import {autobind} from 'core-decorators';
+import {hot} from 'react-hot-loader/root';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Editor from '@components/Editor';
 import Console from '@components/Console';
 import Menu from '@components/Menu';
@@ -112,100 +111,83 @@ const debounce = (fn, delay) => {
     }
 };
 
-class App extends React.PureComponent {
-    static displayName = 'App';
+const App = () => {
 
-    state = {
-        output: '',
-        autoRun: true,
-        iFrameDoc: iFrameDocCompile()
-    };
+    const [output, setOutput] = useState('');
+    const [code, setCode] = useState('');
+    const [autoRun, setAutoRun] = useState(true);
+    const [iFrameDoc, setIFrameDoc] = useState(iFrameDocCompile());
+    const sandboxRef = useRef(null);
 
-    componentDidMount() {
-        window.addEventListener('message', this.onMessage);
-        this.autoExecute = debounce(this.execute, 800);
+    const handleOnMessage = useCallback((e) => {
+        if (e.origin === "null" && e.source === sandboxRef.current.contentWindow) {
+            setOutput(e.data)
+        }
+    }, []);
+
+    const execute = useCallback(code => {
+        sandboxRef.current.contentWindow.postMessage(code, '*');
+    }, []);
+    const autoExecute = useRef(debounce(execute, 1000))
+
+    const codeChanged = useCallback(code => {
+        setCode(code)
+        if (autoRun && autoExecute.current) {
+            autoExecute.current(code)
+        }
+    }, []);
+
+    const autoRunChanged = useCallback(autoRun => {
+        setAutoRun(autoRun)
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener('message', handleOnMessage);
 
         const code = localStorage.getItem('code');
         if (code) {
-            this.execute(code);
+            execute(code);
         }
-    }
 
-    componentWillUnmount() {
-        window.removeEventListener('message', this.onMessage);
-    }
-
-    @autobind
-    onMessage(e) {
-        const frame = this.sandboxed;
-        if (e.origin === "null" && e.source === frame.contentWindow) {
-            this.setState((prevState) => ({...prevState, output: e.data}));
+        return () => {
+            window.removeEventListener('message', handleOnMessage);
         }
-    }
+    }, []);
 
-    @autobind
-    codeChanged(code) {
-        this.setState((prevState) => ({...prevState, code}));
-        const { autoRun } = this.state;
-        if (autoRun && this.autoExecute) {
-            this.autoExecute(code)
-        }
-    }
-
-    @autobind
-    autoRunChanged(autoRun) {
-        this.setState((prevState) => ({...prevState, autoRun}));
-    }
-
-    @autobind
-    execute(code) {
-        const frame = this.sandboxed;
-        frame.contentWindow.postMessage(code, '*');
-    }
-
-    @autobind
-    librariesChanged(libraries) {
+    const librariesChanged = useCallback(libraries => {
         const iFrameDoc = iFrameDocCompile(libraries.map(l => l.url));
-        this.setState((prevState) => ({...prevState, iFrameDoc}));
-
+        setIFrameDoc(iFrameDoc);
         localStorage.setItem('libraries', JSON.stringify(libraries));
-
-        const { autoRun, code } = this.state;
-        if (autoRun && this.autoExecute) {
-            this.autoExecute(code)
+        if (autoRun && autoExecute.current) {
+            autoExecute.current(code)
         }
-    }
+    }, []);
 
-    render() {
-        const {output, iFrameDoc, autoRun} = this.state;
-
-        return (
-            <div className="ui container">
-                <Menu
-                    onLibrariesChanged={this.librariesChanged}
-                    autoRun={autoRun}
-                    onAutoRunChange={this.autoRunChanged}
+    return (
+        <div className="ui container">
+            <Menu
+                onLibrariesChanged={librariesChanged}
+                autoRun={autoRun}
+                onAutoRunChange={autoRunChanged}
+            />
+            <div className="ui stackable two column grid">
+                <Editor className="column"
+                        executeHandler={execute}
+                        onChange={codeChanged}
+                        displayRunButton={!autoRun}
                 />
-                <div className="ui stackable two column grid">
-                    <Editor className="column"
-                            executeHandler={this.execute}
-                            onChange={this.codeChanged}
-                            displayRunButton={!autoRun}
-                    />
-                    <Console className="column" output={output} />
-                </div>
-                <iframe
-                    style={styles.iframe}
-                    sandbox='allow-scripts allow-same-origin allow-forms'
-                    ref={(el) => {
-                        this.sandboxed = el;
-                    }}
-                    src="about:blank"
-                    srcDoc={iFrameDoc}/>
+                <Console className="column" output={output}/>
             </div>
-        );
-    }
+            <iframe
+                style={styles.iframe}
+                sandbox='allow-scripts allow-same-origin allow-forms'
+                ref={sandboxRef}
+                src="about:blank"
+                srcDoc={iFrameDoc}/>
+        </div>
+    );
 }
 
+App.displayName = 'App';
 
 export default __DEVELOPMENT__ ? hot(App) : App;

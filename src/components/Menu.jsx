@@ -1,5 +1,4 @@
-import React from 'react'
-import {autobind} from 'core-decorators';
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import logo from '../../favicon.png';
 import AddLibrary from './AddLibrary';
 import Libraries from './Libraries'
@@ -10,21 +9,17 @@ const styles = {
     }
 };
 
-export default class extends React.PureComponent {
-    static displaName = 'Menu';
+const Menu = ({autoRun, onAutoRunChange, onLibrariesChanged}) => {
+    const [libraries, setLibraries] = useState([])
+    const autoRunRef = useRef(null);
 
-    state = {
-        libraries: []
-    };
-
-    componentDidMount() {
+    useEffect(() => {
         const libraries = localStorage.getItem('libraries');
         if (libraries) {
-            this.setState((prevState) => ({...prevState, libraries: JSON.parse(libraries)}));
+            setLibraries(JSON.parse(libraries))
         }
 
-        const { autoRun, onAutoRunChange } = this.props;
-        const $autorun = $(this.autorun);
+        const $autorun = $(autoRunRef.current);
         $autorun.checkbox({
             onChange() {
                 const isEnabled = $autorun.checkbox('is checked');
@@ -37,47 +32,41 @@ export default class extends React.PureComponent {
         } else {
             $autorun.checkbox('set unchecked');
         }
-    }
+    }, []);
 
-    @autobind
-    onLibraryAdded(library) {
-        const {onLibrariesChanged} = this.props;
-        const {libraries} = this.state;
+    const onLibraryAdded = useCallback(library => {
         const newLibraries = [...libraries, library];
-        this.setState((prevState) => ({...prevState, libraries: newLibraries}));
         onLibrariesChanged(newLibraries);
-    }
+    }, []);
 
-    @autobind
-    onLibrariesChanged(libraries) {
-        const {onLibrariesChanged} = this.props;
-        this.setState((prevState) => ({...prevState, libraries}));
+    const handleLibrariesChanged = useCallback(libraries => {
+        setLibraries(libraries)
         onLibrariesChanged(libraries);
-    }
+    }, []);
 
-    render() {
-        const {libraries} = this.state;
+    const hasLibraries = libraries && libraries.length > 0;
 
-        const hasLibraries = libraries && libraries.length > 0;
-
-        return <div className="ui borderless menu" style={styles.menu}>
+    return (
+        <div className="ui borderless menu" style={styles.menu}>
             <a href="/" className="header item">
-                <img src={logo}/> Evalbox
+                <img src={logo} alt="Logo of EvalBox"/> EvalBox
             </a>
             <div className="item">
-                <AddLibrary onAdded={this.onLibraryAdded}/>
+                <AddLibrary onAdded={onLibraryAdded}/>
             </div>
-            {hasLibraries &&
-            <Libraries className="fitted item"
-                       libraries={libraries}
-                       onChange={this.onLibrariesChanged}/>
-            }
+            {hasLibraries && (
+                <Libraries className="fitted item" libraries={libraries} onChange={handleLibrariesChanged}/>
+            )}
             <div className="right menu">
-                <div className="ui item toggle checkbox" ref={(el) => { this.autorun = el; }}>
+                <div className="ui item toggle checkbox" ref={autoRunRef}>
                     <input type="checkbox"/>
                     <label>Auto run</label>
                 </div>
             </div>
         </div>
-    }
+    )
 }
+
+Menu.displaName = 'Menu';
+
+export default Menu

@@ -1,5 +1,4 @@
-import React from 'react';
-import { autobind } from 'core-decorators';
+import React, {useCallback, useState} from 'react';
 import Code from './Code'
 
 const styles = {
@@ -14,39 +13,33 @@ const styles = {
     }
 };
 
-export default class extends React.PureComponent {
-    static displayName = 'Editor';
+const Editor = ({executeHandler, onChange, className, displayRunButton}) => {
+    const [code, setCode] = useState('')
 
-    state = {code: ''};
-
-    @autobind
-    onCodeChange(code) {
-        this.setState((prevState) => ({...prevState, code }));
-        const { onChange } = this.props;
+    const onCodeChange = useCallback(code => {
+        setCode(code)
         onChange(code);
-    }
+    }, []);
 
-    @autobind
-    executeClick() {
-        const {code} = this.state;
-        const { executeHandler } = this.props;
+    const executeClick = useCallback(() => {
         executeHandler(code);
-    }
+    }, []);
 
-    render() {
-        const { className, displayRunButton } = this.props;
-
-        return (
-            <div className={className} style={styles.root}>
-                {displayRunButton &&
-                    <a className="ui small primary button" onClick={this.executeClick} style={styles.run}>
-                        <i className="right play icon"/> Run
-                    </a>
-                }
-                <Code
-                    className="ui bottom attached segment"
-                    onChange={this.onCodeChange} />
-            </div>
-        );
-    }
+    return (
+        <div className={className} style={styles.root}>
+            {displayRunButton &&
+            <a className="ui small primary button" onClick={executeClick} style={styles.run}>
+                <i className="right play icon"/> Run
+            </a>
+            }
+            <Code
+                className="ui bottom attached segment"
+                onChange={onCodeChange}/>
+        </div>
+    );
 }
+
+Editor.displayName = 'Editor';
+
+
+export default Editor;

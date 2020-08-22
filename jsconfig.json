@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "checkJs": true,
-    "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "target": "es2017",

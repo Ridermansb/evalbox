@@ -1,25 +1,20 @@
-import React from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import cx from 'classnames';
-import {autobind} from 'core-decorators';
 
-export default class extends React.PureComponent {
-    static displayName = 'AddLibrary';
+const AddLibrary = ({onAdded}) => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [value, setValue] = useState('');
 
-    state = {
-        value: ''
-    };
+    const searchRef = useRef();
+    const dropDownRef = useRef();
 
-    componentDidMount() {
-        const {onAdded} = this.props;
-        const self = this;
-
-        const $search = $(this.search);
-
-        const searchCommumSettings = {
+    useEffect(() => {
+        const $search = $(searchRef.current);
+        const searchCommonSettings = {
             onSelect(result) {
                 const url = result.cdn;
                 onAdded({url, fileName: result.title});
-                self.setState({value: ''});
+                setValue('');
                 $search.search('set value', '');
             },
             minCharacters: 2,
@@ -28,7 +23,7 @@ export default class extends React.PureComponent {
         // onSearchQuery(query)	module	Callback on search query
         // onResults(response)
 
-        const npmSettings = Object.assign({}, searchCommumSettings, {
+        const npmSettings = Object.assign({}, searchCommonSettings, {
             apiSettings: {
                 url: 'https://api.npms.io/v2/search?q={query}',
                 throttle: 600,
@@ -44,7 +39,7 @@ export default class extends React.PureComponent {
             },
         });
 
-        const cdnSettings = Object.assign({}, searchCommumSettings, {
+        const cdnSettings = Object.assign({}, searchCommonSettings, {
             apiSettings: {
                 url: 'https://api.cdnjs.com/libraries?search={query}&fields=name,description',
                 throttle: 600,
@@ -60,9 +55,10 @@ export default class extends React.PureComponent {
             },
         });
 
-        $(this.dropDown).dropdown({
+        const $dropDown = $(dropDownRef.current)
+        $dropDown.dropdown({
             on: 'hover',
-            onChange: function(value) {
+            onChange: function (value) {
                 $search.search('cancel query');
                 $search.search('clear cache');
                 $search.search('destroy');
@@ -73,27 +69,22 @@ export default class extends React.PureComponent {
                 }
             }
         });
-
         $search.search(npmSettings);
-    }
 
-    componentWillUnmount() {
-        $(this.search).search('destroy');
-        $(this.dropDown).dropdown('destroy');
-    }
+        return () => {
+            $search.search('destroy');
+            $dropDown.dropdown('destroy');
+        }
 
-    @autobind
-    handleChange(event) {
+    }, [])
+
+    const handleChange = useCallback(event => {
         const value = event.target.value;
-        this.setState((prevState) => ({...prevState, value}));
-    }
+        setValue(value)
+    }, []);
 
-    @autobind
-    handleKey(e) {
+    const handleKey = useCallback(e => {
         if (e.charCode === 13) {
-            const {value} = this.state;
-            const {onAdded} = this.props;
-
             const splited = value.split('/');
             let fileName = splited.pop();
             if (!fileName || fileName.trim() === '') {
@@ -102,22 +93,21 @@ export default class extends React.PureComponent {
 
             if (fileName) {
                 onAdded({url: value, fileName});
-                this.setState((prevState) => ({...prevState, value: ''}));
+                setValue('');
             }
         }
-    }
+    }, []);
 
-    render() {
-        const {  isLoading } = this.state;
-        const searchClassName = cx('ui', {
-            loading: isLoading
-        }, 'search');
+    const searchClassName = cx('ui', {
+        loading: isLoading
+    }, 'search');
 
-        return <div className={searchClassName}
-                     ref={(el) => {this.search = el;}}>
+    return (
+        <div className={searchClassName}
+             ref={searchRef}>
 
             <div className="ui left labeled small input">
-                <div className="ui dropdown label" ref={(el) => { this.dropDown = el; }}>
+                <div className="ui dropdown label" ref={dropDownRef}>
                     <div className="text">npmjs</div>
                     <i className="dropdown icon"/>
                     <div className="menu">
@@ -126,13 +116,17 @@ export default class extends React.PureComponent {
                     </div>
                 </div>
                 <input type="text"
-                       value={this.state.value}
+                       value={value}
                        placeholder="lodash"
                        className="prompt"
-                       onKeyPress={this.handleKey}
-                       onChange={this.handleChange}
+                       onKeyPress={handleKey}
+                       onChange={handleChange}
                 />
             </div>
         </div>
-    }
+    )
 }
+
+AddLibrary.displayName = 'AddLibrary';
+
+export default AddLibrary
