@@ -48,7 +48,7 @@ const Console = ({ output, className }) => {
         {
             red: isError,
         },
-        'bottom attached secondary segment'
+        'attached secondary segment'
     );
 
     const clipboardCopyIsSupport = Clipboard.isSupported();

@@ -4,12 +4,6 @@ import logo from '../../favicon.png';
 import AddLibrary from './AddLibrary';
 import Libraries from './Libraries';
 
-const styles = {
-    menu: {
-        marginTop: 10,
-    },
-};
-
 const Menu = ({ autoRun = true, onAutoRunChange, onLibrariesChanged }) => {
     const [libraries, setLibraries] = useState([]);
     const autoRunReference = useRef(null);
@@ -54,7 +48,7 @@ const Menu = ({ autoRun = true, onAutoRunChange, onLibrariesChanged }) => {
     const hasLibraries = libraries && libraries.length > 0;
 
     return (
-        <div className="ui borderless menu" style={styles.menu}>
+        <div className="ui top fixed container menu">
             <a href="/" className="header item">
                 <img src={logo} alt="Logo of EvalBox" /> EvalBox
             </a>

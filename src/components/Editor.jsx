@@ -19,6 +19,7 @@ const Editor = ({
     onChange,
     className = '',
     displayRunButton = true,
+    ...properties
 }) => {
     const [code, setCode] = useState('');
 
@@ -35,7 +36,7 @@ const Editor = ({
     }, [code, executeHandler]);
 
     return (
-        <div className={className} style={styles.root}>
+        <div className={className} style={styles.root} {...properties}>
             {displayRunButton && (
                 <a
                     className="ui small primary button"
@@ -45,10 +46,7 @@ const Editor = ({
                     <i className="right play icon" /> Run
                 </a>
             )}
-            <Code
-                className="ui bottom attached segment"
-                onChange={onCodeChange}
-            />
+            <Code className="attached segment" onChange={onCodeChange} />
         </div>
     );
 };

@@ -1,5 +1,11 @@
 import { hot } from 'react-hot-loader/root';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+    Fragment,
+} from 'react';
 import Editor from '@components/Editor';
 import Console from '@components/Console';
 import Menu from '@components/Menu';
@@ -25,7 +31,7 @@ const iFrameDocumentCompile = (scripts = []) => {
     return `<!DOCTYPE html>
 <html lang="en-US">
 <head>
-    <title>Evalbox's Frame</title>
+    <title>EvalBox's Frame</title>
     ${tagScripts}
     <script>
 
@@ -178,29 +184,32 @@ const App = () => {
     );
 
     return (
-        <div className="ui container">
+        <Fragment>
             <Menu
                 onLibrariesChanged={librariesChanged}
                 autoRun={autoRun}
                 onAutoRunChange={autoRunChanged}
             />
-            <div className="ui stackable two column grid">
-                <Editor
-                    className="column"
-                    executeHandler={execute}
-                    onChange={codeChanged}
-                    displayRunButton={!autoRun}
+            {/* eslint-disable-next-line react-perf/jsx-no-new-object-as-prop */}
+            <div style={{ marginTop: 60 }}>
+                <div className="ui internally celled equal width padded grid">
+                    <Editor
+                        className="column"
+                        executeHandler={execute}
+                        onChange={codeChanged}
+                        displayRunButton={!autoRun}
+                    />
+                    <Console className="column" output={output} />
+                </div>
+                <iframe
+                    style={styles.iframe}
+                    sandbox="allow-scripts allow-same-origin allow-forms"
+                    ref={sandboxReference}
+                    src="about:blank"
+                    srcDoc={iFrameDocument}
                 />
-                <Console className="column" output={output} />
             </div>
-            <iframe
-                style={styles.iframe}
-                sandbox="allow-scripts allow-same-origin allow-forms"
-                ref={sandboxReference}
-                src="about:blank"
-                srcDoc={iFrameDocument}
-            />
-        </div>
+        </Fragment>
     );
 };
 

@@ -13,3 +13,7 @@ html.ios body {
 html, body, pre, code {
     margin: 0;
 }
+
+.CodeMirror {
+    height: calc(100vh - 100px);
+}
